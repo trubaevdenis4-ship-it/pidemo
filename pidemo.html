@@ -1,0 +1,1072 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Підемо? — Створи персональне запрошення</title>
+<meta name="description" content="Створи персональне запрошення та надішли його одним посиланням.">
+<meta name="theme-color" content="#1a0b2e">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Playfair+Display:ital,wght@0,600;1,600&family=Unbounded:wght@500;700&family=Oswald:wght@500;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:dark;box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg1:#1a0b2e;--bg2:#4a1259;--bg3:#ff4d8d;--ink:#fff;--mut:rgba(255,255,255,.68);
+  --acc:#ff4d8d;--acc2:#ffb36b;--card:rgba(255,255,255,.10);--cardb:rgba(255,255,255,.18);
+  --field:rgba(255,255,255,.12);--onacc:#fff;
+  --fd:'Unbounded',system-ui,sans-serif;--fb:'Manrope',system-ui,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0;background:#14091f;overscroll-behavior:none}
+body{position:relative;overflow:hidden;font-family:var(--fb);color:var(--ink);font-size:16px;line-height:1.5}
+#bg{position:fixed;inset:0;z-index:0;background:linear-gradient(160deg,var(--bg1),var(--bg2) 55%,var(--bg3));background-size:220% 220%;animation:drift 22s ease-in-out infinite;transition:filter .6s}
+@keyframes drift{0%,100%{background-position:0% 0%}50%{background-position:100% 100%}}
+.orb{position:fixed;z-index:0;width:70vmax;height:70vmax;border-radius:50%;filter:blur(60px);opacity:.35;pointer-events:none;will-change:transform;animation:orb 18s ease-in-out infinite}
+.orb.a{left:-30vmax;top:-20vmax;background:radial-gradient(circle,var(--acc),transparent 65%)}
+.orb.b{right:-35vmax;bottom:-25vmax;background:radial-gradient(circle,var(--acc2),transparent 65%);animation-delay:-9s}
+@keyframes orb{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(8vmax,6vmax,0) scale(1.15)}}
+#fx{position:fixed;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.screen{position:absolute;inset:0;z-index:2;display:none;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.screen.active{display:block;animation:in .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.wrap{max-width:520px;margin:0 auto;padding:18px 18px 40px}
+h1,h2,h3{font-family:var(--fd);margin:0;line-height:1.15;letter-spacing:-.01em}
+.logo{font-size:clamp(46px,17vw,84px);font-weight:700;background:linear-gradient(120deg,#fff,var(--acc2) 45%,var(--acc));-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 8px 30px rgba(255,255,255,.18))}
+.sub{color:var(--mut);font-size:clamp(16px,4.4vw,19px)}
+.btn{appearance:none;border:0;cursor:pointer;font:800 17px var(--fb);color:var(--onacc);min-height:56px;padding:0 26px;border-radius:20px;width:100%;
+  background:linear-gradient(120deg,var(--acc),var(--acc2));box-shadow:0 10px 30px -8px var(--acc),inset 0 1px 0 rgba(255,255,255,.35);transition:transform .15s,filter .2s;touch-action:manipulation}
+.btn:active{transform:scale(.97)}.btn:disabled{opacity:.5}
+.btn.ghost{background:var(--card);color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--cardb);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.btn.sm{min-height:46px;font-size:15px;border-radius:16px;padding:0 16px;width:auto}
+.row{display:flex;gap:10px}.row>*{flex:1}
+.card{background:var(--card);border:1.5px solid var(--cardb);border-radius:24px;padding:18px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.stack{display:flex;flex-direction:column;gap:14px}
+label.l{display:block;font-weight:800;font-size:14px;margin:0 0 6px;opacity:.9}
+.field{width:100%;min-height:54px;border-radius:16px;border:1.5px solid transparent;background:var(--field);color:var(--ink);font:600 16px var(--fb);padding:14px 16px;outline:0;transition:border-color .2s}
+.field:focus{border-color:var(--acc)}textarea.field{min-height:130px;resize:vertical}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 10px;scroll-snap-type:x proximity;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;scroll-snap-align:start;border:1.5px solid var(--cardb);background:var(--card);color:var(--ink);border-radius:999px;padding:10px 16px;font:700 15px var(--fb);cursor:pointer;min-height:44px}
+.chip.on{background:linear-gradient(120deg,var(--acc),var(--acc2));color:var(--onacc);border-color:transparent}
+.badge{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.06em;padding:3px 8px;border-radius:999px;background:linear-gradient(120deg,#ffd23f,#ff9f1c);color:#3b2200}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.type{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 8px;border-radius:20px;border:1.5px solid var(--cardb);background:var(--card);color:var(--ink);font:800 15px var(--fb);cursor:pointer;min-height:96px;transition:transform .15s}
+.type span{font-size:30px}.type.on{border-color:var(--acc);box-shadow:0 0 0 3px color-mix(in srgb,var(--acc) 40%,transparent),0 12px 30px -10px var(--acc);transform:translateY(-2px)}
+.top{display:flex;align-items:center;justify-content:space-between;padding:6px 0 18px}
+.pill{background:var(--card);border:1.5px solid var(--cardb);color:var(--ink);border-radius:999px;padding:9px 14px;font:700 14px var(--fb);cursor:pointer;min-height:40px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.steps{counter-reset:s;display:flex;flex-direction:column;gap:10px}
+.steps .card{display:flex;gap:14px;align-items:center;padding:14px 16px}
+.steps .n{flex:0 0 40px;height:40px;border-radius:14px;display:grid;place-items:center;font:800 18px var(--fd);background:linear-gradient(120deg,var(--acc),var(--acc2));color:var(--onacc)}
+.float{position:absolute;font-size:28px;animation:fl 6s ease-in-out infinite;opacity:.9}
+@keyframes fl{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-16px) rotate(8deg)}}
+.hero{position:relative;padding:34px 0 26px;text-align:center}
+/* wizard */
+.wz{display:flex;flex-direction:column;height:100%}
+.wz .body{flex:1;overflow-y:auto;padding:0 18px 18px;-webkit-overflow-scrolling:touch}
+.wz .bar{padding:12px 18px 14px;display:flex;gap:10px;background:linear-gradient(to top,rgba(0,0,0,.28),transparent)}
+.prog{height:6px;border-radius:9px;background:var(--card);overflow:hidden;margin:2px 0 18px}.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .4s}
+.tcard{flex:0 0 118px;height:96px;border-radius:18px;border:2px solid transparent;color:#fff;font:800 13px var(--fb);padding:10px;text-align:left;cursor:pointer;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;position:relative;scroll-snap-align:start}
+.tcard.on{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.35)}
+.tcard .badge{position:absolute;top:8px;right:8px}
+.photos{display:flex;gap:10px;flex-wrap:wrap}.ph{width:86px;height:86px;border-radius:16px;background-size:cover;background-position:center;position:relative}
+.ph button{position:absolute;top:-6px;right:-6px;width:28px;height:28px;border-radius:50%;border:0;background:#000b;color:#fff;font-size:16px}
+.add{width:86px;height:86px;border-radius:16px;border:2px dashed var(--cardb);background:transparent;color:var(--ink);font-size:30px;cursor:pointer}
+.sw{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0}
+.sw input{appearance:none;width:54px;height:32px;border-radius:99px;background:var(--field);position:relative;transition:.25s;flex:0 0 54px;cursor:pointer}
+.sw input::after{content:"";position:absolute;left:4px;top:4px;width:24px;height:24px;border-radius:50%;background:#fff;transition:.25s}
+.sw input:checked{background:linear-gradient(120deg,var(--acc),var(--acc2))}.sw input:checked::after{transform:translateX(22px)}
+.vari{cursor:pointer;text-align:left;font:600 15px var(--fb);color:var(--ink);background:var(--field);border:1.5px solid var(--cardb);border-radius:16px;padding:14px;width:100%}
+.url{display:flex;gap:8px;align-items:center;background:var(--field);border-radius:16px;padding:6px 6px 6px 14px;font:700 14px var(--fb);word-break:break-all}
+.small{font-size:13px;color:var(--mut)}
+.st{display:inline-block;padding:3px 10px;border-radius:99px;font:800 12px var(--fb);background:var(--field)}
+.st.ACCEPTED{background:#1fbf75;color:#032}.st.DECLINED{background:#6b7280;color:#fff}.st.PENDING{background:#ffd23f;color:#3b2200}.st.EXPIRED,.st.DELETED{background:#444;color:#ddd}.st.ACTIVE{background:var(--acc);color:var(--onacc)}
+/* invitation */
+#invite{padding:0}
+.inv{min-height:100%;position:relative;display:flex;flex-direction:column}
+.stage{position:relative;height:0;overflow:hidden;transition:height 1s cubic-bezier(.2,.8,.2,1);flex:0 0 auto}
+.stage.full{height:100%}.stage.mini{height:min(42vh,330px)}.stage canvas{width:100%;height:100%;display:block}
+.center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:18px;padding:30px 24px;min-height:100%}
+.seal{font-size:92px;animation:beat 1.4s ease-in-out infinite;filter:drop-shadow(0 10px 30px var(--acc))}
+@keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.18)}30%{transform:scale(1)}45%{transform:scale(1.12)}}
+.loader{width:64px;height:64px;position:relative}.loader i{position:absolute;inset:0;font-style:normal;font-size:54px;animation:beat 1s infinite}
+.content{width:100%;max-width:520px;margin:0 auto;padding:6px 18px 60px;display:flex;flex-direction:column;gap:16px}
+.blk{opacity:0;transform:translateY(26px) scale(.98);transition:opacity .7s,transform .7s cubic-bezier(.2,.8,.2,1)}
+.blk.on{opacity:1;transform:none}
+.greet{font-family:var(--fd);font-size:clamp(30px,10vw,46px);line-height:1.1}
+.ttl{font-family:var(--fd);font-size:clamp(22px,6.5vw,30px);margin-bottom:8px}
+.txt{white-space:pre-wrap;font-size:18px}
+.gal{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;border-radius:24px}.gal img{flex:0 0 100%;scroll-snap-align:center;width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:24px}
+.when{display:flex;gap:14px;align-items:center}.when .big{font:700 28px var(--fd)}
+.cd{font:800 20px var(--fb);font-variant-numeric:tabular-nums;color:var(--acc2);margin-top:8px}
+.map{border-radius:20px;overflow:hidden;margin:12px 0}.map svg{display:block;width:100%;height:auto}
+.replybox{padding-bottom:130px;position:relative}
+.ans{display:flex;flex-direction:column;gap:12px;position:relative;min-height:190px}
+.yes{min-height:66px;font-size:20px}
+.no{transition:transform .28s cubic-bezier(.3,1.6,.5,1)}
+.done{text-align:center;padding:10px 0}.done .big{font:700 clamp(28px,9vw,40px) var(--fd)}
+.shake{animation:shake .4s}@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.back{position:fixed;left:12px;top:calc(env(safe-area-inset-top,0px) + 10px);z-index:20}
+.fab{position:fixed;right:12px;top:calc(env(safe-area-inset-top,0px) + 10px);z-index:20}
+.sheetbg{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:50;display:flex;align-items:flex-end;justify-content:center;animation:fade .25s}
+@keyframes fade{from{opacity:0}}
+.sheet{width:100%;max-width:520px;max-height:88%;overflow-y:auto;background:linear-gradient(160deg,var(--bg1),var(--bg2));border-radius:28px 28px 0 0;padding:22px 18px calc(22px + env(safe-area-inset-bottom,0px));animation:up .35s cubic-bezier(.2,.8,.2,1);border:1.5px solid var(--cardb);color:var(--ink)}
+@keyframes up{from{transform:translateY(60%)}}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);transform:translateX(-50%);z-index:90;background:#000d;color:#fff;border-radius:16px;padding:12px 18px;font:700 15px var(--fb);max-width:88%;text-align:center;animation:in .3s}
+.qrbox{background:#fff;border-radius:22px;padding:8px;display:grid;place-items:center}.qrbox svg,.qrbox img{width:100%;height:auto;display:block;border-radius:16px}
+.hr{height:1px;background:var(--cardb);margin:6px 0}
+@media (prefers-reduced-motion:reduce){#bg,.orb,.seal,.float,.loader i{animation:none}.blk{transition:none}}
+.reduce *{animation:none!important}.reduce .blk{transition:none}
+@media (min-width:768px){.wrap,.content{max-width:560px}}
+/* ===== v2: нове ===== */
+#bgimg{position:fixed;inset:0;z-index:0;background-size:cover;background-position:center;opacity:0;transition:opacity .6s;pointer-events:none}
+#bgimg.on{opacity:1}
+#bgimg::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(10,4,24,.42),rgba(10,4,24,.64))}
+.chip:disabled{opacity:.4;cursor:not-allowed}
+.btn:disabled{cursor:not-allowed}
+.note{padding:12px 14px;border-radius:14px;background:var(--field);font-size:14px;line-height:1.45}
+.skel{height:86px;border-radius:16px;background:linear-gradient(90deg,var(--field),rgba(255,255,255,.26),var(--field));background-size:200% 100%;animation:sk 1.2s linear infinite}
+@keyframes sk{to{background-position:-200% 0}}
+.vari:active{transform:scale(.99)}
+.vari .vt{display:block;margin-top:8px;font-weight:800;font-size:13px;color:var(--acc2)}
+/* зайчик, що соромиться */
+.shywrap{position:relative;width:min(230px,62vw);margin:2px auto 14px;cursor:pointer;user-select:none;-webkit-user-select:none}
+.shy{width:100%;height:auto;display:block;overflow:visible;filter:drop-shadow(0 14px 22px rgba(0,0,0,.28))}
+.shy *{transform-box:fill-box}
+.shy .head{transform-origin:50% 95%;animation:sway 3.6s ease-in-out infinite}
+@keyframes sway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+.shy .paw.l{animation:pawl 5.5s ease-in-out infinite}
+.shy .paw.r{animation:pawr 5.5s ease-in-out infinite}
+@keyframes pawl{0%,28%{transform:translate(0,0) rotate(0)}40%,70%{transform:translate(-17px,-14px) rotate(-32deg)}84%,100%{transform:translate(0,0) rotate(0)}}
+@keyframes pawr{0%,28%{transform:translate(0,0) rotate(0)}40%,70%{transform:translate(17px,-14px) rotate(32deg)}84%,100%{transform:translate(0,0) rotate(0)}}
+.shy .ear.l{transform-origin:50% 95%;animation:earl 5.5s ease-in-out infinite}
+.shy .ear.r{transform-origin:50% 95%;animation:earr 5.5s ease-in-out infinite}
+@keyframes earl{0%,28%{transform:rotate(-24deg)}40%,70%{transform:rotate(0)}84%,100%{transform:rotate(-24deg)}}
+@keyframes earr{0%,28%{transform:rotate(24deg)}40%,70%{transform:rotate(0)}84%,100%{transform:rotate(24deg)}}
+.shy .blush{transform-origin:50% 50%;animation:blush 2.2s ease-in-out infinite}
+@keyframes blush{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.2)}}
+.shy .eyes{transform-origin:50% 50%;animation:blink 5.5s infinite}
+@keyframes blink{0%,50%,56%,100%{transform:scaleY(1)}53%{transform:scaleY(.1)}}
+.shywrap.tap .shy{animation:hop .6s cubic-bezier(.3,1.6,.5,1)}
+@keyframes hop{0%{transform:translateY(0)}35%{transform:translateY(-22px) scale(1.04,.97)}100%{transform:translateY(0)}}
+.shyh{position:absolute;font-size:22px;opacity:0;animation:rise 4.4s ease-in infinite}
+.shyh.a{left:12%;top:20%;animation-delay:.4s}.shyh.b{left:78%;top:12%;animation-delay:1.8s}.shyh.c{left:48%;top:-2%;animation-delay:3s}
+@keyframes rise{0%{opacity:0;transform:translateY(16px) scale(.6)}20%{opacity:1}100%{opacity:0;transform:translateY(-52px) scale(1.15)}}
+.shycap{text-align:center;font:700 15px var(--fb);color:var(--mut);min-height:24px;margin-bottom:18px}
+/* оплата */
+.cardnum{font:800 22px var(--fb);letter-spacing:.07em;text-align:center;padding:15px 10px;border-radius:16px;background:var(--field);border:1.5px dashed var(--cardb);cursor:pointer}
+.bigamt{font:700 42px var(--fd);line-height:1.1}
+.pay .small{margin:0}
+.paystep{display:flex;gap:12px;align-items:flex-start}
+.paystep i{flex:0 0 28px;height:28px;border-radius:10px;display:grid;place-items:center;font:800 14px var(--fb);font-style:normal;background:linear-gradient(120deg,var(--acc),var(--acc2));color:var(--onacc)}
+.codebox{font:800 20px var(--fb);letter-spacing:.1em;text-align:center;padding:10px;border-radius:14px;background:var(--field);cursor:pointer}
+/* карта */
+.mapbox{height:min(50vh,400px);border-radius:18px;overflow:hidden;position:relative;z-index:0;isolation:isolate;background:rgba(127,127,127,.2)}
+.pin{background:none!important;border:0!important;font-size:30px;line-height:1;filter:drop-shadow(0 4px 6px rgba(0,0,0,.4))}
+.leaflet-container{font-family:var(--fb)}
+/* фінальна анімація відповіді */
+.fin{position:fixed;inset:0;z-index:70;background:radial-gradient(circle at 50% 40%,rgba(255,110,170,.2),rgba(10,4,24,.82));-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:fade .3s;touch-action:manipulation}
+.fin.sad{background:radial-gradient(circle at 50% 40%,rgba(110,150,230,.22),rgba(6,10,32,.88))}
+.fin.out{opacity:0;transition:opacity .35s}
+.fin.flash::after{content:"";position:absolute;inset:0;background:#fff;animation:flash .5s ease-out forwards;pointer-events:none}
+@keyframes flash{from{opacity:.85}to{opacity:0}}
+.finstage{position:absolute;inset:0}.finstage canvas{width:100%;height:100%;display:block}
+.fincap{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 9vh);text-align:center;padding:0 24px;font:700 clamp(24px,7vw,34px)/1.2 var(--fd);color:#fff;text-shadow:0 4px 24px rgba(0,0,0,.45);opacity:0;transform:translateY(14px);transition:opacity .6s,transform .6s}
+.fincap.on{opacity:1;transform:none}
+.fincap small{display:block;margin-top:10px;font:600 14px var(--fb);opacity:.75}
+.finemoji{position:absolute;inset:0;display:grid;place-items:center;font-size:88px;animation:beat 1.2s infinite}
+.admtest{display:flex;gap:8px;flex-wrap:wrap}
+.admtest .btn{flex:1 1 30%}
+.pill{white-space:nowrap}
+.no.pop{animation:popno .5s ease-in forwards;pointer-events:none}
+@keyframes popno{35%{transform:scale(1.35) rotate(-3deg)}100%{transform:scale(0) rotate(12deg);opacity:0}}
+.ans{align-items:stretch}.ans .no{align-self:stretch}
+.ily{position:fixed;inset:0;z-index:75;display:grid;place-items:center;background:radial-gradient(circle at 50% 45%,rgba(120,10,50,.55),rgba(10,2,16,.94));animation:fade .4s}
+.ily.out{opacity:0;transition:opacity .45s}
+.shy .paw.l,.shy .paw.r,.shy .ear.l,.shy .ear.r{animation:none!important;transition:transform .45s cubic-bezier(.3,1.5,.5,1)}
+.shy .ear.l{transform:rotate(-24deg)}.shy .ear.r{transform:rotate(24deg)}
+.shywrap:hover .ear.l,.shywrap.peek .ear.l,.shywrap:hover .ear.r,.shywrap.peek .ear.r{transform:rotate(0)}
+.shywrap:hover .paw.l,.shywrap.peek .paw.l{transform:translate(-17px,-14px) rotate(-32deg)}
+.shywrap:hover .paw.r,.shywrap.peek .paw.r{transform:translate(17px,17px) rotate(0)}
+.shywrap:hover .paw.r,.shywrap.peek .paw.r{transform:translate(17px,-14px) rotate(32deg)}
+.seg{display:flex;gap:6px;margin:10px 0 16px}.seg button{flex:1;height:8px;border-radius:99px;border:0;padding:0;background:var(--field);transition:.3s}.seg button.done{background:linear-gradient(90deg,var(--acc),var(--acc2));cursor:pointer}.seg button.cur{background:var(--acc);box-shadow:0 0 0 3px var(--field)}
+.legal p{margin:0 0 10px;line-height:1.5;font-size:14px}.legal h3{margin:14px 0 6px;font-size:15px}
+.req{color:#ff6b8b}.bad{outline:2px solid #ff6b8b!important}
+.later{background:none;border:0;color:var(--mut);font:600 13px var(--fb);text-decoration:underline;cursor:pointer;margin:6px auto 0;display:block}
+.sw2{width:34px;height:34px;border-radius:50%;border:3px solid transparent;cursor:pointer}.sw2.on{border-color:var(--acc)}
+.no.wig{animation:wig .5s}
+@keyframes wig{20%{transform:translateX(-8px) rotate(-3deg)}40%{transform:translateX(8px) rotate(3deg)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+</style>
+</head>
+<body>
+<div id="bg"></div><div id="bgimg"></div><div class="orb a"></div><div class="orb b"></div>
+<canvas id="fx"></canvas>
+
+<section class="screen" id="home"></section>
+<section class="screen" id="wizard"></section>
+<section class="screen" id="share"></section>
+<section class="screen" id="mine"></section>
+<section class="screen" id="invite"></section>
+<section class="screen" id="admin"></section>
+<button class="pill fab" id="rm" aria-pressed="false">⚙️ Налаштування</button>
+
+<script>
+"use strict";
+/* ============================================================
+   Підемо? — одна сторінка: інтерфейс + місця, де в проді працює сервер (// SERVER:)
+   ============================================================ */
+const $=(s,r=document)=>r.querySelector(s);
+function h(tag,props,...kids){const e=document.createElement(tag);
+  for(const [k,v] of Object.entries(props||{})){
+    if(k==='class')e.className=v;else if(k==='style')e.style.cssText=v;
+    else if(k.startsWith('on'))e.addEventListener(k.slice(2),v);
+    else if(v===true)e.setAttribute(k,'');else if(v!==false&&v!=null)e.setAttribute(k,v);}
+  for(const k of kids.flat(9)){if(k==null||k===false)continue;e.append(k.nodeType?k:document.createTextNode(String(k)));}
+  return e;}
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const ease={out:t=>1-Math.pow(1-t,3),back:t=>{const c=1.7;return 1+(c+1)*Math.pow(t-1,3)+c*Math.pow(t-1,2)},io:t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2};
+
+/* ---------- налаштування власника ---------- */
+const PAY={card:'5355280062823669',link:''};   // link — необов'язково: посилання на «банку» чи сторінку оплати
+const AI_ENDPOINT='/api/ai/text';              // SERVER: POST → Claude API, відповідь {variants:[...]}  (див. ai-proxy.js)
+const MAP_TILES='https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+const NOTIFY_ENDPOINT='/api/notify';          // SERVER: POST {token,tg,text} → Telegram-бот (див. ai-proxy.js)
+const PLANS={single:{n:'Одне запрошення',p:20,days:0},week:{n:'Тиждень',p:99,days:7},month:{n:'Місяць',p:249,days:30}};
+const SELLER={name:'[ПІБ ФОП]',code:'[РНОКПП]',email:'[email для звернень]',addr:'[адреса]'};   // підстав свої дані — вони потрапляють у юридичні тексти
+const SUPPORT={tg:'',email:''};                  // необов'язково: @нік у Telegram і пошта — з'являться кнопками в підтримці
+const SUPPORT_ENDPOINT='/api/support';          // SERVER: звернення та скарги → тобі в Telegram
+
+/* ---------- дані ---------- */
+const TYPES={
+  date:{e:'🌹',n:'Побачення',theme:'love',rom:1,sc:'kiss',act:'піти на побачення',ph:'Підемо на побачення?'},
+  walk:{e:'🌳',n:'Прогулянка',theme:'minimal',sc:'walk',act:'прогулятись разом',ph:'Підемо гуляти?'},
+  coffee:{e:'☕',n:'Кава',theme:'minimal',sc:'coffee',act:'випити разом кави',ph:'Підемо на каву?'},
+  cinema:{e:'🎬',n:'Кіно',theme:'cinema',sc:'cinema',act:'піти разом у кіно',ph:'Підемо в кіно?'},
+  meet:{e:'🤝',n:'Зустріч',theme:'minimal',sc:'wave',act:'зустрітися',ph:'Давай зустрінемось?'},
+  friends:{e:'🎉',n:'Друзі',theme:'friends',sc:'walk',act:'зібратися нашою компанією',yes:'Іду! 🎉',ph:'Збираємось!'},
+  bday:{e:'🎂',n:'День народження',theme:'friends',sc:'party',act:'відсвяткувати день народження',yes:'Буду! 🎂',ph:'Запрошую на день народження!'},
+  confess:{e:'💌',n:'Зізнання',theme:'love',rom:1,sc:'kiss',act:'поговорити про важливе',ph:'Мені є що тобі сказати'},
+  rel:{e:'💞',n:'Стосунки',theme:'r3d',rom:1,sc:'kiss',act:'спробувати бути разом',ph:'Давай спробуємо?'},
+  custom:{e:'✨',n:'Власний варіант',theme:'minimal',sc:'wave',act:'провести час разом',ph:'Маю пропозицію'}
+};
+const mk=(o)=>Object.assign({fd:"'Manrope',system-ui,sans-serif",fb:"'Manrope',system-ui,sans-serif",onacc:'#fff'},o);
+const THEMES={
+  minimal:{n:'Minimal',v:mk({bg1:'#f7f4ee',bg2:'#ece6da',bg3:'#d9cfbf',ink:'#1c1a17',mut:'rgba(28,26,23,.62)',acc:'#1c1a17',acc2:'#7a6850',card:'rgba(255,255,255,.7)',cardb:'rgba(0,0,0,.09)',field:'rgba(0,0,0,.06)'}),fx:{shape:'dot',n:22,s:[2,5],dir:'up',cols:['rgba(0,0,0,.14)']}},
+  love:{n:'Love',v:mk({bg1:'#2a0620',bg2:'#7a1048',bg3:'#ff4d6d',acc:'#ff4d8d',acc2:'#ffb36b',fd:"'Playfair Display',Georgia,serif"}),fx:{shape:'heart',n:30,s:[10,26],dir:'up',cols:['#ff6b9d','#ff9ec0','#ffd1e0']}},
+  friends:{n:'Friends',v:mk({bg1:'#0f1b4d',bg2:'#2b3bd6',bg3:'#19d3c5',acc:'#ffd23f',acc2:'#ff6b6b',onacc:'#1b1400',fd:"'Unbounded',system-ui,sans-serif"}),fx:{shape:'dot',n:36,s:[3,8],dir:'down',cols:['#ffd23f','#ff6b6b','#19d3c5','#ffffff']}},
+  night:{n:'Night Date',pr:1,v:mk({bg1:'#050818',bg2:'#14123a',bg3:'#2f1d6b',acc:'#8ab4ff',acc2:'#c79bff',onacc:'#06102a'}),fx:{shape:'star',n:70,s:[5,12],dir:'drift',cols:['#ffffff','#bcd2ff','#e2c8ff']}},
+  secret:{n:'Secret',pr:1,v:mk({bg1:'#03100c',bg2:'#0a2a22',bg3:'#0f5a44',acc:'#3dffb0',acc2:'#00c2ff',onacc:'#012116',fd:"'Unbounded',system-ui,sans-serif"}),fx:{shape:'dot',n:44,s:[2,6],dir:'up',cols:['#3dffb0','#00c2ff','#9affd9']}},
+  cinema:{n:'Cinema',pr:1,v:mk({bg1:'#0e0303',bg2:'#2a0a0a',bg3:'#6b1d12',acc:'#f5c451',acc2:'#ff7a45',onacc:'#1c1000',fd:"'Oswald',system-ui,sans-serif"}),fx:{shape:'dot',n:50,s:[1.5,4],dir:'down',cols:['#f5c451','#ffe6a3','#fff']}},
+  r3d:{n:'Romantic 3D',pr:1,v:mk({bg1:'#ffe6f2',bg2:'#ffc4de',bg3:'#d6b8ff',ink:'#4a1d3f',mut:'rgba(74,29,63,.68)',acc:'#ff4f93',acc2:'#ff9ac2',card:'rgba(255,255,255,.62)',cardb:'rgba(255,255,255,.9)',field:'rgba(255,255,255,.7)',fd:"'Caveat',cursive"}),fx:{shape:'heart',n:34,s:[10,24],dir:'up',cols:['#ff5c9d','#ff9ac2','#ffffff']}},
+  sakura:{n:'Sakura',pr:1,v:mk({bg1:'#fff0f5',bg2:'#ffc1d6',bg3:'#ff8fb1',ink:'#4a1c33',mut:'rgba(74,28,51,.68)',acc:'#ff5c8a',acc2:'#ffb3c7',card:'rgba(255,255,255,.66)',cardb:'rgba(255,255,255,.9)',field:'rgba(255,255,255,.72)',fd:"'Playfair Display',Georgia,serif"}),fx:{shape:'heart',n:30,s:[8,18],dir:'down',cols:['#ff9ec0','#ffd1e0','#ffffff']}},
+  sunset:{n:'Sunset',pr:1,v:mk({bg1:'#2b0a3d',bg2:'#c2185b',bg3:'#ff9a3c',acc:'#ffd166',acc2:'#ff6b6b',onacc:'#2b1400',fd:"'Unbounded',system-ui,sans-serif"}),fx:{shape:'dot',n:36,s:[3,8],dir:'up',cols:['#ffd166','#ff9a3c','#ffffff']}},
+  ocean:{n:'Ocean',pr:1,v:mk({bg1:'#021b2f',bg2:'#04619c',bg3:'#17c3b2',acc:'#7df9ff',acc2:'#b8f2e6',onacc:'#022030'}),fx:{shape:'dot',n:40,s:[3,10],dir:'up',cols:['rgba(255,255,255,.5)','#7df9ff','#b8f2e6']}},
+  gold:{n:'Gold',vip:1,v:mk({bg1:'#120c02',bg2:'#3a2807',bg3:'#8a6414',acc:'#ffd76a',acc2:'#ffb347',onacc:'#241500',fd:"'Playfair Display',Georgia,serif"}),fx:{shape:'star',n:60,s:[5,12],dir:'drift',cols:['#ffd76a','#fff3c4','#ffffff']}},
+  galaxy:{n:'Galaxy',vip:1,v:mk({bg1:'#05010f',bg2:'#26085a',bg3:'#7a1fa2',acc:'#c77dff',acc2:'#ff6ec7',onacc:'#12002a',fd:"'Unbounded',system-ui,sans-serif"}),fx:{shape:'star',n:90,s:[4,11],dir:'drift',cols:['#ffffff','#c77dff','#ff6ec7','#7df9ff']}},
+  neon:{n:'Neon',vip:1,v:mk({bg1:'#07050f',bg2:'#1a0b3d',bg3:'#ff2e93',acc:'#00f5d4',acc2:'#ff2e93',onacc:'#00221d',fd:"'Unbounded',system-ui,sans-serif"}),fx:{shape:'heart',n:34,s:[10,22],dir:'up',cols:['#ff2e93','#00f5d4','#ffffff']}},
+  custom:{n:'Custom',pr:1,v:null,fx:{shape:'heart',n:30,s:[10,24],dir:'up',cols:[]}}
+};
+const APP_THEME={v:mk({}),fx:{shape:'heart',n:38,s:[10,28],dir:'up',cols:['#ff6b9d','#ffb36b','#ffd1e0','#ff4d8d','#ffffff']}};
+const ST={ACTIVE:'Активне',ACCEPTED:'Прийнято',PENDING:'Думає',DECLINED:'Відмова',EXPIRED:'Завершено',DELETED:'Видалено'};
+
+/* ---------- стан ---------- */
+const store={get(){try{return JSON.parse(localStorage.getItem('pidemo.v1')||'null')}catch(e){return null}},set(v){try{localStorage.setItem('pidemo.v1',JSON.stringify(v))}catch(e){}}};
+const S=Object.assign({uid:'',invites:[],credits:0,premiumTokens:0,miniTokens:0,freeUsed:false,purchases:[],key:'',reports:[],notifs:[],tickets:[],sub:null,singles:0,pcode:'',fio:'',lite:false,adminHash:'',reduced:matchMedia('(prefers-reduced-motion: reduce)').matches},store.get()||{});
+S.step=0;S.draft=null;if(!S.uid)S.uid=token();if(!S.key)S.key=token()+token();if(!S.pcode)S.pcode='PD-'+token().slice(0,6).toUpperCase();if(typeof S.animOff==='boolean')S.reduced=S.animOff;
+const save=()=>{const{draft,step,reduced,...rest}=S;store.set(rest)};
+let SERVER=false;   // true, коли сторінку віддає наш сервер (є /api/health)
+function reload(){if(SERVER)return;const s=store.get();if(!s)return;
+  for(const k of Object.keys(s)){if(k==='draft'||k==='step'||k==='reduced')continue;
+    if(k==='invites'){ // оновлюємо наявні об'єкти «на місці», щоб відкрите запрошення не відривалося від стану
+      S.invites=s.invites.map(b=>{const e=S.invites.find(x=>x.id===b.id);if(!e)return b;const gs=(b.guests||[]).map(g=>{const o=(e.guests||[]).find(x=>x.id===g.id);return o?Object.assign(o,g):g});Object.assign(e,b);e.guests=gs;return e})}
+    else S[k]=s[k]}}
+const newDraft=()=>({type:'date',multi:false,guests:[{name:'',note:'',noteOn:false},{name:'',note:'',noteOn:false}],name:'',title:'',titleTouched:false,body:'',date:'',time:'',dateMode:'set',place:'',address:'',lat:'',lng:'',placeMode:'manual',photos:[],bgImg:'',bunnies:true,bun1:'#ffffff',bun2:'#d9c8ff',theme:'love',themeTouched:false,anim:'auto',mode:'full',noMode:'plain',noCount:5,secretOn:false,secretText:'',consent:false,aiStyle:'romantic',aiIdea:''});
+const isLocked=t=>!!(t.pr||t.vip);
+const hasSub=()=>!!(S.sub&&S.sub.until>Date.now());
+const canPro=()=>!S.freeUsed||hasSub();   // перше запрошення — пробне з усіма PRO/VIP-функціями
+function proFeatures(d){const f=[],t=THEMES[d.theme];if(isLocked(t))f.push((t.vip?'VIP':'PRO')+'-тема «'+t.n+'»');if(d.photos.length>1)f.push('кілька фото');if(d.bgImg)f.push('власний фон');
+  if(d.dateMode==='partner'||d.placeMode==='partner')f.push('вибір дати/місця гостем');if(['shrink','dead','hide','grow'].includes(d.noMode)||(d.noMode==='run'&&+d.noCount!==5))f.push('налаштована кнопка «Ні»');if(d.secretOn)f.push('секретне повідомлення');return f}
+const effStatus=i=>{if(i.status==='DELETED')return'DELETED';if(i.status==='ACCEPTED'||i.status==='DECLINED')return i.status;return Date.now()>i.expiresAt?'EXPIRED':i.status};
+
+/* ---------- утиліти ---------- */
+async function api(path,o={}){const hd={'Content-Type':'application/json'};if(S.uid&&S.key)hd.Authorization='Bearer '+S.uid+':'+S.key;
+  const r=await fetch(path,{method:o.method||(o.body!==undefined?'POST':'GET'),headers:hd,body:o.body!==undefined?JSON.stringify(o.body):undefined});let j=null;try{j=await r.json()}catch(e){}
+  if(!r.ok){const e=new Error('http '+r.status);e.status=r.status;e.data=j;throw e}return j}
+async function detectServer(){try{const r=await fetch('/api/health',{cache:'no-store'});const j=await r.json();SERVER=!!(j&&j.ok)}catch(e){SERVER=false}}
+async function sync(){if(!SERVER)return;try{const m=await api('/api/me');Object.assign(S,{freeUsed:m.user.freeUsed,singles:m.user.singles,sub:m.user.sub,pcode:m.user.pcode,invites:m.invites,purchases:m.purchases,notifs:m.notifs});if(m.user.fio)S.fio=m.user.fio;save()}catch(e){}}
+function clearUrl(){if(location.hash||/^\/i\//.test(location.pathname))history.replaceState(null,'',SERVER?'/':location.pathname+location.search)}
+function notifyOwner(inv,text,kind){if(SERVER)return; // повідомлення автору: у кабінеті, в браузері, Telegram, SMS (SMS — лише VIP)
+  const n=inv.notify||{on:true};if(n.on===false)return;const who=inv.name||'Гість';
+  S.notifs=S.notifs||[];S.notifs.unshift({t:Date.now(),token:inv.token,text,read:false});S.notifs=S.notifs.slice(0,50);save();
+  try{if('Notification' in window&&Notification.permission==='granted')new Notification('Підемо? 💌',{body:text})}catch(e){}
+  try{fetch(NOTIFY_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},keepalive:true,body:JSON.stringify({token:inv.token,tg:n.tg||'',phone:inv.isVip&&kind!=='open'?(n.phone||''):'',text,kind:kind||'answer'})}).catch(()=>{})}catch(e){}}
+function answerText(inv,ans,line){const who=inv.name||'Гість',t=TYPES[inv.type];
+  return{YES:`✅ ${who} відповідає «ТАК» на «${t.n}»${line?' — '+line:''}. Вітаємо! 🎉`,NO:`❌ ${who} відповідає «НІ». Буває й так — зайчик тебе обіймає 🐰`,MAYBE:`💭 ${who} поки що думає. Відповідь ще може змінитись — зазирни пізніше.`}[ans]}
+const unread=()=>(S.notifs||[]).filter(n=>!n.read).length;
+function toast(t){const e=h('div',{class:'toast'},t);document.body.append(e);setTimeout(()=>e.remove(),2800)}
+function token(){const A='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';let o='';while(o.length<12){const b=crypto.getRandomValues(new Uint8Array(24));for(const x of b){if(x<248&&o.length<12)o+=A[x%62]}}return o}
+async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+const urlOf=t=>SERVER?location.origin+'/i/'+t:location.href.split('#')[0]+'#/i/'+t;
+const fmtCard=s=>String(s).replace(/(\d{4})(?=\d)/g,'$1 ');
+const cap1=s=>s?s.charAt(0).toUpperCase()+s.slice(1):s;
+const today=()=>new Date().toISOString().slice(0,10);
+async function copy(t,msg){try{await navigator.clipboard.writeText(t);toast(msg||'Скопійовано ✓')}catch(e){const a=h('textarea',{style:'position:fixed;opacity:0'});a.value=t;document.body.append(a);a.select();try{document.execCommand('copy');toast(msg||'Скопійовано ✓')}catch(_){toast('Не вдалося скопіювати')}a.remove()}}
+async function shareLink(inv,g){const data={title:'Підемо?',text:((g?g.name:inv.name)?(g?g.name:inv.name)+', ':'')+'для тебе є запрошення 💌',url:urlOf(g?g.token:inv.token)};if(navigator.share){try{await navigator.share(data);return}catch(e){if(e.name==='AbortError')return}}copy(data.url)}
+const loaded={};function loadScript(u){return loaded[u]||(loaded[u]=new Promise((ok,no)=>{const s=document.createElement('script');s.src=u;s.onload=ok;s.onerror=()=>{delete loaded[u];no()};document.head.append(s)}))}
+function loadCss(u){if(loaded[u])return;loaded[u]=1;document.head.append(h('link',{rel:'stylesheet',href:u}))}
+const URL_THREE='https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js',URL_QR='https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js',URL_JSQR='https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js',URL_LF='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js',URL_LFC='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
+const loadLeaflet=()=>{loadCss(URL_LFC);return loadScript(URL_LF)};
+const plural=(n,a)=>a[n%10===1&&n%100!==11?0:(n%10>=2&&n%10<=4&&(n%100<12||n%100>14))?1:2];
+const parseDT=(d,t)=>{if(!d)return null;const[y,m,dd]=d.split('-').map(Number);const[hh,mm]=(t||'00:00').split(':').map(Number);return new Date(y,m-1,dd,hh||0,mm||0)};
+const fmtDate=d=>d?parseDT(d).toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long'}):'';
+function sheet(node,onClose){const bg=h('div',{class:'sheetbg',onclick:e=>{if(e.target===bg)close()}},h('div',{class:'sheet'},node));const close=()=>{bg.remove();onClose&&onClose()};document.body.append(bg);return close}
+function compress(file,m=1080,q=.8){return new Promise((ok,no)=>{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{const k=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);let r=c.toDataURL('image/webp',q);if(!r.startsWith('data:image/webp'))r=c.toDataURL('image/jpeg',q);ok(r)};im.onerror=no;im.src=u})}
+
+/* ---------- тема ---------- */
+function themeVars(key,d){if(key==='custom'){const a=d?.colorA||'#ff4d8d',b=d?.colorB||'#7c3aed';return mk({bg1:'#0f0a20',bg2:b,bg3:a,acc:a,acc2:b==='#7c3aed'?'#c4a1ff':b})}return (THEMES[key]||APP_THEME).v}
+function applyTheme(key,d,opts={}){const t=key==='app'?APP_THEME:THEMES[key];let v=key==='app'?APP_THEME.v:themeVars(key,d);
+  const img=key!=='app'&&d&&d.bgImg?d.bgImg:'';
+  if(img)v={...v,ink:'#ffffff',mut:'rgba(255,255,255,.78)',card:'rgba(10,4,24,.46)',cardb:'rgba(255,255,255,.24)',field:'rgba(255,255,255,.16)',onacc:v.onacc};
+  const r=document.documentElement.style;for(const[k,val]of Object.entries(v))r.setProperty('--'+k,val);
+  const bi=$('#bgimg');bi.style.backgroundImage=img?`url("${img}")`:'';bi.classList.toggle('on',!!img);
+  document.querySelector('meta[name=theme-color]').content=v.bg1;
+  let cfg={...t.fx};if(key==='custom')cfg.cols=[d.colorA,'#ffffff',d.colorB];
+  if(opts.anim==='min'||S.lite)cfg.n=Math.round(cfg.n/2.5);fx.set(cfg);
+  $('#fx').style.display=opts.anim==='off'?'none':'block'}
+
+/* ---------- 2D частинки: серця літають по всьому екрану ---------- */
+const fx=(()=>{const cv=$('#fx'),ctx=cv.getContext('2d');let W=0,H=0,parts=[],bursts=[],cfg=null,raf=0,last=0;const R=(a,b)=>a+Math.random()*(b-a);
+  const cols=()=>['#ff4d8d','#ffb36b','#ffffff','#ffd166',getComputedStyle(document.documentElement).getPropertyValue('--acc').trim()||'#ff4488'];
+  function shape(k,x,y,s,col,al,rot){ctx.save();ctx.translate(x,y);ctx.rotate(rot||0);ctx.globalAlpha=al;ctx.fillStyle=col;ctx.beginPath();
+    if(k==='heart'){const u=s;ctx.translate(0,-u*.5);ctx.moveTo(0,u*.3);ctx.bezierCurveTo(-u*.05,-u*.1,-u*.6,-u*.1,-u*.6,u*.3);ctx.bezierCurveTo(-u*.6,u*.7,0,u*.9,0,u*1.1);ctx.bezierCurveTo(0,u*.9,u*.6,u*.7,u*.6,u*.3);ctx.bezierCurveTo(u*.6,-u*.1,u*.05,-u*.1,0,u*.3)}
+    else if(k==='star'){const u=s/2;ctx.moveTo(0,-u);ctx.quadraticCurveTo(0,0,u,0);ctx.quadraticCurveTo(0,0,0,u);ctx.quadraticCurveTo(0,0,-u,0);ctx.quadraticCurveTo(0,0,0,-u)}
+    else if(k==='conf'){ctx.rect(-s/2,-s/4,s,s/2)}
+    else ctx.arc(0,0,s/2,0,6.283);
+    ctx.fill();ctx.restore()}
+  function seed(){parts=[];if(!cfg||!W)return;const area=clamp(W*H/(390*780),.8,2.2),n=Math.round(cfg.n*area);
+    for(let i=0;i<n;i++)parts.push({x:R(0,W),y:R(0,H),s:R(cfg.s[0],cfg.s[1]),v:R(.22,.85)*(cfg.dir==='down'?1:cfg.dir==='up'?-1:.15),dx:R(-.25,.25),ph:R(0,6.28),c:cfg.cols[i%cfg.cols.length]||'#fff'})}
+  function resize(){const dpr=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);seed();kick()}
+  function draw(t,dt,anim){ctx.clearRect(0,0,W,H);
+    if(cfg)for(const p of parts){if(anim){p.y+=p.v*dt;p.x+=p.dx*dt+Math.sin(t/1800+p.ph)*.3;
+        if(p.y<-40){p.y=H+30;p.x=R(0,W)}if(p.y>H+40){p.y=-30;p.x=R(0,W)}if(p.x<-30)p.x=W+20;if(p.x>W+30)p.x=-20}
+      const tw=cfg.shape==='star'?.35+.4*Math.sin(t/700+p.ph):cfg.shape==='heart'?.5+.2*Math.sin(t/900+p.ph):.7;shape(cfg.shape,p.x,p.y,p.s,p.c,Math.max(.1,tw),cfg.shape==='heart'?Math.sin(t/1500+p.ph)*.35:0)}
+    for(let i=bursts.length-1;i>=0;i--){const b=bursts[i];b.x+=b.vx*dt;b.y+=b.vy*dt;b.vy+=(b.g==null?.12:b.g)*dt;b.vx*=.985;b.r+=b.vr*dt;b.l-=dt;if(b.l<=0){bursts.splice(i,1);continue}shape(b.k,b.x,b.y,b.s,b.c,clamp(b.l/40,0,1),b.r)}}
+  function loop(now){raf=0;if(document.hidden)return;const dt=Math.min(2.5,(now-(last||now))/16.67);last=now;
+    if(S.reduced&&!bursts.length){draw(0,0,false);return}draw(now,dt,!S.reduced);raf=requestAnimationFrame(loop)}
+  function kick(){if(!raf){last=0;raf=requestAnimationFrame(loop)}}
+  addEventListener('resize',resize);document.addEventListener('visibilitychange',kick);
+  resize();
+  return{set(c){cfg=c;seed();kick()},kick,resize,
+    burst(x,y,n=80){if(S.reduced)return;const cs=cols();for(let i=0;i<n;i++){const a=R(0,6.283),sp=R(2,9);bursts.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-3,k:['heart','heart','conf','star'][i%4],s:R(8,20),c:cs[i%cs.length],r:R(0,6),vr:R(-.2,.2),l:R(70,120)})}kick()},
+    rain(n=60){if(S.reduced)return;const cs=cols();for(let i=0;i<n;i++)bursts.push({x:R(0,W),y:R(-H*.7,-20),vx:R(-.6,.6),vy:R(1.4,3.8),g:.02,k:['heart','heart','star','conf'][i%4],s:R(10,22),c:cs[i%cs.length],r:R(0,6),vr:R(-.1,.1),l:R(150,230)});kick()}}})();
+
+/* ============================================================
+   3D зайчики (Three.js, вантажиться ліниво)
+   kind:  kiss | walk | coffee | cinema | party | wave
+   phase: intro (знайомство) | yes (серце вибухає від радості) | no / maybe (зайчик плаче)
+   ============================================================ */
+function bunnyScene(box,cb,o){
+  const THREE=window.THREE;let renderer;
+  try{renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});if(!renderer.getContext())throw 0}catch(e){return null}
+  const cv=renderer.domElement;box.append(cv);renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));
+  const kind=o.kind||'wave',phase=o.phase||'intro',intro=phase==='intro',cry=phase==='no'||phase==='maybe',soft=phase==='maybe',same=kind==='walk',ROM=!!o.rom;
+  const R=(a,b)=>a+Math.random()*(b-a),sin=Math.sin,abs=Math.abs,p01=(t,a,b)=>clamp((t-a)/(b-a),0,1);
+  const scene=new THREE.Scene(),cam=new THREE.PerspectiveCamera(35,1,.1,60);
+  scene.add(new THREE.HemisphereLight(0xffffff,0xffb3d1,.95));
+  const dl=new THREE.DirectionalLight(0xffffff,.9);dl.position.set(2,4,5);scene.add(dl);
+  const rl=new THREE.DirectionalLight(0xff8fc0,.55);rl.position.set(-3,2,-3);scene.add(rl);
+  const M=(c,x={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,flatShading:true,roughness:.85},x));
+  const SG=(r,a=9,b=7)=>new THREE.SphereGeometry(r,a,b);
+  const add=(p,geo,mat,x,y,z,sx=1,sy=1,sz=1)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);m.scale.set(sx,sy,sz);p.add(m);return m};
+  function bunny(col){
+    const g=new THREE.Group(),inner=new THREE.Group();g.rotation.order='ZYX';g.add(inner);
+    const sm={flatShading:false,roughness:.75},m=M(col,Object.assign({emissive:col,emissiveIntensity:.1},sm)),pk=M(0xffa3c4,sm),dk=M(0x2b1a2e,{flatShading:false,roughness:.3}),wh=M(0xffffff,{flatShading:false,roughness:.5,emissive:0xffffff,emissiveIntensity:.25}),blushM=M(0xff8fb4,{flatShading:false,roughness:.9,transparent:true,opacity:.85});
+    add(inner,SG(.56,18,14),m,0,0,0,1,.92,.9);add(inner,SG(.34,14,10),M(0xfff5f9,sm),0,-.06,.44,1,1,.35);
+    const head=new THREE.Group();head.position.set(0,.85,.12);inner.add(head);add(head,SG(.52,22,18),m,0,0,0,1.06,.96,.98);
+    const ears=[],eyes=[],cheeks=[],paws=[];
+    for(const s of[-1,1]){
+      const e=new THREE.Group();e.position.set(s*.2,.34,-.06);e.rotation.z=-s*.14;head.add(e);
+      add(e,SG(.17,14,10),m,0,.48,0,.6,2.8,.5);add(e,SG(.11,10,8),pk,0,.46,.06,.5,2.3,.3);ears.push(e);
+      const ey=add(head,SG(.08,14,12),dk,s*.2,.05,.45);add(ey,SG(.03,8,6),wh,.025,.035,.06);add(ey,SG(.014,6,5),wh,-.02,-.02,.066);eyes.push(ey);
+      cheeks.push(add(head,SG(.1,10,8),blushM,s*.33,-.08,.38,1,.7,.45));
+      paws.push(add(inner,SG(.14,12,10),m,s*.36,.06,.5));
+      add(inner,SG(.18,10,8),m,s*.3,-.52,.3,1,.65,1.5)}
+    add(head,SG(.045,8,6),pk,0,-.02,.5);
+    const smile=new THREE.Group();head.add(smile);for(const x of[-.035,.035]){const t=new THREE.Mesh(new THREE.TorusGeometry(.035,.009,6,12,Math.PI),dk);t.rotation.z=Math.PI;t.position.set(x,-.1,.5);smile.add(t)}
+    const mouth=add(head,SG(.06,10,8),dk,0,-.14,.485,1.3,.9,.5);mouth.visible=false;
+    add(inner,SG(.2,12,10),wh,0,-.05,-.55);
+    return{g,inner,head,ears,eyes,cheeks,paws,mouth,smile}}
+  const b1=bunny(o.c1||'#ffffff'),b2=bunny(o.c2||'#d9c8ff');scene.add(b1.g,b2.g);
+  const shM=new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:.16}),sh=[0,1].map(()=>{const m=new THREE.Mesh(new THREE.CircleGeometry(.75,20),shM);m.rotation.x=-Math.PI/2;m.position.y=-.7;scene.add(m);return m});
+  /* 3D-серце (екструзія) */
+  const hs=new THREE.Shape();hs.moveTo(.25,.25);hs.bezierCurveTo(.25,.25,.2,0,0,0);hs.bezierCurveTo(-.3,0,-.3,.35,-.3,.35);hs.bezierCurveTo(-.3,.55,-.1,.77,.25,.95);hs.bezierCurveTo(.6,.77,.8,.55,.8,.35);hs.bezierCurveTo(.8,.35,.8,0,.5,0);hs.bezierCurveTo(.35,0,.25,.25,.25,.25);
+  const hg=new THREE.ExtrudeGeometry(hs,{depth:.22,bevelEnabled:true,bevelSize:.07,bevelThickness:.07,bevelSegments:3});hg.center();hg.rotateZ(Math.PI);
+  const ss=new THREE.Shape();for(let i=0;i<10;i++){const r=i%2?.4:.92,a=Math.PI/2+i*Math.PI/5,x=Math.cos(a)*r,y=Math.sin(a)*r;i?ss.lineTo(x,y):ss.moveTo(x,y)}ss.closePath();
+  const starG=new THREE.ExtrudeGeometry(ss,{depth:.2,bevelEnabled:true,bevelSize:.05,bevelThickness:.05,bevelSegments:2});starG.center();
+  const BG=ROM?hg:starG;
+  const heart=new THREE.Mesh(BG,ROM?M(0xff3d77,{flatShading:false,roughness:.35,emissive:0xff1a5e,emissiveIntensity:.4}):M(0xffc83d,{flatShading:false,roughness:.3,emissive:0xff9f1a,emissiveIntensity:.45}));heart.scale.setScalar(.001);heart.visible=false;scene.add(heart);
+  /* уламки-сердечка для вибуху */
+  const shMats=[0xff3d77,0xff8fb8,0xffd166,0xffffff,0xc79bff].map(c=>M(c,{flatShading:false,roughness:.4,emissive:c,emissiveIntensity:.25}));
+  const shards=[];for(let i=0;i<70;i++){const m=new THREE.Mesh(BG,shMats[i%5]);m.visible=false;scene.add(m);shards.push({m,v:new THREE.Vector3(),w:new THREE.Vector3(),l:0,s:.2,g:0})}
+  function puff(x,y,z,n,spd,up,sz,gr){let c=0;for(const s of shards){if(s.l>0)continue;s.m.position.set(x,y,z);const a=R(0,6.283),b=R(-.6,.9),sp=R(.4,1)*spd;
+    s.v.set(Math.cos(a)*Math.cos(b)*sp,Math.sin(b)*sp*.7+R(0,up),Math.sin(a)*Math.cos(b)*sp*.6+R(.2,1));s.w.set(R(-6,6),R(-6,6),R(-6,6));s.s=sz*R(.6,1.3);s.g=gr;s.l=R(1.4,2.6);s.m.visible=true;s.m.scale.setScalar(s.s);if(++c>=n)break}}
+  /* ударна хвиля */
+  const ringM=new THREE.MeshBasicMaterial({color:0xff7ab0,transparent:true,opacity:0,side:THREE.DoubleSide,depthWrite:false});
+  const ring=new THREE.Mesh(new THREE.RingGeometry(.9,1,48),ringM);ring.visible=false;ring.position.set(0,1.9,.5);scene.add(ring);
+  /* сльози та попкорн */
+  const tearM=new THREE.MeshStandardMaterial({color:0x7cd0ff,transparent:true,opacity:.9,roughness:.2,emissive:0x2a9bff,emissiveIntensity:.35}),tg=SG(.05,6,5);
+  const tears=[];for(let i=0;i<30;i++){const m=new THREE.Mesh(tg,tearM);m.visible=false;m.scale.set(.8,1.3,.8);scene.add(m);tears.push({m,v:new THREE.Vector3(),l:0})}
+  const kernM=M(0xfff1c9,{flatShading:false}),kg=SG(.07,6,5),kern=[];for(let i=0;i<16;i++){const m=new THREE.Mesh(kg,kernM);m.visible=false;scene.add(m);kern.push({m,v:new THREE.Vector3(),l:0})}
+  /* реквізит */
+  const P=new THREE.Group();scene.add(P);let cups=[],flame=null,tufts=[];
+  if(kind==='coffee')cups=[0,1].map(i=>{const c=new THREE.Group(),mt=M(i?0xffc2dd:0xffffff,{flatShading:false});add(c,new THREE.CylinderGeometry(.15,.11,.24,12),mt,0,0,0);add(c,new THREE.CylinderGeometry(.125,.125,.01,12),M(0x5a3420,{flatShading:false}),0,.115,0);add(c,new THREE.TorusGeometry(.07,.022,6,10),mt,.17,0,0);c.position.set((i?1:-1)*.62,-.05,.78);P.add(c);return c});
+  if(kind==='cinema'){const bk=new THREE.Group();add(bk,new THREE.CylinderGeometry(.3,.22,.4,10),M(0xe63946),0,0,0);add(bk,new THREE.CylinderGeometry(.31,.235,.1,10),M(0xffffff),0,.08,0);for(let i=0;i<9;i++)add(bk,SG(.085,6,5),kernM,R(-.2,.2),.22+R(0,.07),R(-.2,.2));bk.position.set(0,-.38,.8);P.add(bk)}
+  if(kind==='party'){const ck=new THREE.Group();add(ck,new THREE.CylinderGeometry(.34,.34,.2,14),M(0xff9bbb),0,0,0);add(ck,new THREE.CylinderGeometry(.23,.23,.16,14),M(0xffffff),0,.18,0);add(ck,new THREE.CylinderGeometry(.025,.025,.14,6),M(0xffd23f),0,.33,0);flame=add(ck,SG(.05,6,5),new THREE.MeshBasicMaterial({color:0xffa62b}),0,.44,0);ck.position.set(0,-.45,.85);P.add(ck);
+    for(const[b,c]of[[b1,0xffd23f],[b2,0x7c4dff]]){const hat=add(b.head,new THREE.ConeGeometry(.2,.5,8),M(c),0,.52,.05);hat.rotation.z=.2;add(hat,SG(.06,6,5),M(0xffffff),0,.27,0)}}
+  if(kind==='walk')for(let i=0;i<10;i++){const u=add(scene,new THREE.ConeGeometry(.09,.28,4),M(i%3?0x7ed957:0x5cc24a),-4.5+i*.95,-.56,R(.5,1.4));tufts.push(u)}
+  if(intro)P.visible=false;
+  const FIN={kiss:{g:.9,ry:.95},walk:{g:.95,ry:1.15},coffee:{g:.9,ry:.8},cinema:{g:.85,ry:.35},party:{g:.9,ry:.6},wave:{g:.9,ry:.8}}[kind]||{g:.9,ry:.8};
+  const V=new THREE.Vector3();let run=false,t0=0,prev=0,vis=true,raf=0,boom=false,boomT=0,done=false,burstD=false,lastPuff=0,clink=false,tearT=0,kT=0,Z0=9;
+  function size(){const w=box.clientWidth||300,hh=box.clientHeight||300;renderer.setSize(w,hh,false);cam.aspect=w/hh;Z0=clamp(1.7/(.3153*(w/hh)),7,13);cam.updateProjectionMatrix()}
+  const ro=new ResizeObserver(size);ro.observe(box);size();
+  const io=new IntersectionObserver(e=>{vis=e[0].isIntersecting;if(vis&&run&&!raf)raf=requestAnimationFrame(frame)});io.observe(box);
+  function burstAt(x,y,z,n){cam.updateMatrixWorld();V.set(x,y,z).project(cam);const r=cv.getBoundingClientRect();cb.burst(r.left+(V.x+1)/2*r.width,r.top+(1-V.y)/2*r.height,n)}
+  const dress=(b,sq,ed,hx,hz,bb,mo,bl)=>{b.eyes.forEach(e=>e.scale.y=Math.max(.12,1-sq));b.cheeks.forEach(c=>c.scale.set(bl,.7*bl,.5));
+    b.ears.forEach((e,i)=>{const s=i?1:-1;e.rotation.z=-s*(.14+1.1*ed);e.rotation.x=.45*ed});b.head.rotation.x=hx;b.head.position.set(0,.85+bb,hz);b.mouth.visible=mo;b.smile.visible=!mo};
+  function frame(now){raf=0;if(!run||!vis||document.hidden)return;if(!t0){t0=now;prev=now}
+    const t=(now-t0)/1000,dt=Math.min(.05,(now-prev)/1000);prev=now;
+    let g=FIN.g,ry1=FIN.ry,ry2=same?FIN.ry:-FIN.ry,hop1=0,hop2=0,rz1=0,rz2=0,hz=.12,squint=0,blush=1,smile=false,bob1=0,bob2=0,at,e1=1,e2=1,shakeX=0,zf=1,lx=0,ly=.7,sad=0,lv=0,mv=0;
+    if(intro){e1=ease.out(p01(t,.2,1.5));e2=same?e1:ease.out(p01(t,1.1,2.4));at=Math.max(0,t-2.2);const hp=abs(sin(t*6.5))*.18;if(e1<1)hop1=hp;if(e2<1)hop2=hp;P.visible=e2>.95}else at=t;
+    /* дія за типом запрошення */
+    if(!cry)switch(kind){
+      case'kiss':{const l=ease.io(p01(at,.2,1.7));g-=.1*l;ry1+=.3*l;ry2=-ry1;hz+=.2*l+.012*l*sin(at*6);rz1=-.1*l;rz2=.1*l;squint=.8*l;blush=1+.9*l;
+        if(l>.95&&now-lastPuff>700){lastPuff=now;puff(0,1.2,.7,2,.5,1.3,.16,0)}break}
+      case'walk':{hop1=Math.max(hop1,abs(sin(t*5))*.22);hop2=Math.max(hop2,abs(sin(t*5+1.1))*.22);ry1+=sin(t*2.5)*.06;ry2+=sin(t*2.5+1)*.06;smile=true;break}
+      case'coffee':{const l=ease.io(p01(at,.3,1.4));rz1=-.1*l;rz2=.1*l;g-=.05*l;ry1+=.15*l;ry2=-ry1;blush=1+.5*l;const sip=abs(sin(at*2.2))*.03;
+        cups.forEach((c,i)=>c.position.set((i?1:-1)*(.62-.2*l),-.05+.12*l+sip,.78));if(l>.97&&!clink){clink=true;puff(0,.35,.8,8,2,2.5,.14,4)}break}
+      case'cinema':{ry1=.35;ry2=-.35;bob1=abs(sin(at*13))*.025;bob2=abs(sin(at*13+1))*.025;blush=1.2;
+        if(e2>.95){kT-=dt;if(kT<=0){kT=.2;const k=kern.find(x=>x.l<=0);if(k){k.m.position.set(R(-.15,.15),-.1,.8);k.v.set(R(-.5,.5),R(2.2,3.2),R(0,.6));k.l=1.1;k.m.visible=true}}}break}
+      case'party':{hop1=Math.max(hop1,abs(sin(at*4))*.16);hop2=Math.max(hop2,abs(sin(at*4+.6))*.16);if(flame)flame.scale.setScalar(1+.18*sin(t*18));blush=1.3;smile=true;break}
+      default:{const w1=at>.1,w2=at>.8;b1.paws[1].position.set(w1?.5:.36,w1?.58+sin(at*9)*.12:.08,.45);b2.paws[0].position.set(w2?-.5:-.36,w2?.58+sin(at*9+1)*.12:.08,.45);rz1=sin(at*2)*.04;rz2=-sin(at*2)*.04;smile=true}
+    }
+    /* вступ: серце над зайчиками */
+    if(intro){if(ROM){const hp=ease.back(p01(t,4,4.8));heart.visible=hp>0;heart.scale.setScalar(Math.max(.001,hp*1.05*(t>4.8?1+.07*sin(t*6):1)));heart.position.set(0,1.75+sin(t*2)*.06,.4);heart.rotation.y=sin(t*1.2)*.5}
+      if(t>4.1&&!burstD){burstD=true;burstAt(0,ROM?1.75:1.3,.4,ROM?70:90);puff(0,ROM?1.75:1.3,.5,ROM?14:20,2.6,2,.14,.6)}
+      if(t>5.2&&!done){done=true;cb.done()}}
+    /* ТАК: серце росте, крутиться і вибухає від радості */
+    if(phase==='yes'){const k=ease.back(p01(t,.15,1));
+      if(!boom){heart.visible=true;heart.scale.setScalar(Math.max(.001,k*1.5*(1+.07*sin(t*14))));heart.position.set(0,1.9,.5);heart.rotation.y=t*2.4;hop1=Math.max(hop1,abs(sin(t*7))*.3);hop2=Math.max(hop2,abs(sin(t*7+.4))*.3);smile=true}
+      if(t>1.5&&!boom){boom=true;boomT=t;heart.visible=false;puff(0,1.9,.5,70,6.5,3.5,.3,4.5);ring.visible=true;burstAt(0,1.9,.5,150);cb.flash&&cb.flash()}
+      if(boom){const q=t-boomT,fade=1-p01(q,1.6,2.4);hop1=Math.max(hop1,abs(sin(q*8))*.5*fade);hop2=Math.max(hop2,abs(sin(q*8+.5))*.5*fade);
+        const sp=ease.out(p01(q,0,1.2))*6.283;ry1+=sp;ry2-=sp;smile=true;squint=.7;blush=1.6;
+        ring.scale.setScalar(.3+q*8);ringM.opacity=Math.max(0,1-q/.8);if(q>.9)ring.visible=false;shakeX=(Math.random()-.5)*.3*(1-p01(q,0,.45))}
+      if(t>4.4&&!done){done=true;cb.done()}}
+    /* НІ / ПОДУМАЮ: зайчик залишається сам і плаче */
+    let x1=(same?-7:-3.4)+(-g-(same?-7:-3.4))*e1,x2=(same?-5.8:3.4)+(g-(same?-5.8:3.4))*e2;
+    if(cry){const turn=ease.io(p01(t,.2,1.1));sad=ease.io(p01(t,.3,1.5));lv=ease.io(p01(t,.9,3.2));mv=ease.io(p01(t,1.1,2.6));
+      ry2=ry2+(Math.PI/2-ry2)*turn;x2=g+lv*8;if(t>.9&&lv<1)hop2=abs(sin(t*8))*.14;
+      ry1=ry1+(.18-ry1)*sad;x1=-g+g*mv;
+      bob1=-.04*sad+sin(t*13)*.03*sad*(t>1.2?1:0);zf=1-.3*ease.io(p01(t,1,3));lx=x1*.8;ly=.55;
+      if(t>1.2){tearT-=dt;if(tearT<=0){tearT=soft?.17:.085;b1.g.updateMatrixWorld(true);b1.eyes.forEach((ey,i)=>{ey.getWorldPosition(V);const tr=tears.find(x=>x.l<=0);if(tr){tr.m.position.copy(V);tr.m.position.z+=.05;tr.v.set((i?1:-1)*R(.2,.6),R(.5,1.3),R(.2,.5));tr.l=1.4;tr.m.visible=true}})}}
+      if(t>(soft?4.4:5)&&!done){done=true;cb.done()}}
+    /* застосувати */
+    b1.g.position.set(x1,hop1,0);b2.g.position.set(x2,hop2,0);b1.g.rotation.set(0,ry1,rz1,'ZYX');b2.g.rotation.set(0,ry2,rz2,'ZYX');
+    const sq=squint;
+    dress(b1,cry?.55*sad:sq,cry?(soft?.65:1)*sad:0,cry?.3*sad:0,hz,bob1,smile||(cry&&sad>.5),blush);
+    dress(b2,cry?0:sq,0,0,hz,bob2,smile&&!cry,cry?1:blush);
+    sh[0].position.x=x1;sh[1].position.x=x2;sh[0].scale.setScalar(clamp(1-hop1*.9,.5,1));sh[1].scale.setScalar(clamp(1-hop2*.9,.5,1));
+    tufts.forEach(u=>{u.position.x-=2.4*dt;if(u.position.x<-4.6)u.position.x+=9.5});
+    for(const s of shards){if(s.l<=0)continue;s.l-=dt;s.v.y-=s.g*dt;s.m.position.addScaledVector(s.v,dt);s.m.rotation.x+=s.w.x*dt;s.m.rotation.y+=s.w.y*dt;s.m.rotation.z+=s.w.z*dt;const k=clamp(s.l/.8,0,1);s.m.scale.setScalar(Math.max(.001,s.s*k));if(s.l<=0)s.m.visible=false}
+    for(const tr of tears){if(tr.l<=0)continue;tr.l-=dt;tr.v.y-=6*dt;tr.m.position.addScaledVector(tr.v,dt);if(tr.m.position.y<-.62||tr.l<=0){tr.l=0;tr.m.visible=false}}
+    for(const k of kern){if(k.l<=0)continue;k.l-=dt;k.v.y-=7*dt;k.m.position.addScaledVector(k.v,dt);if(k.m.position.y<-.12||k.l<=0){k.l=0;k.m.visible=false}}
+    cam.position.set(shakeX,.8,Z0*zf);cam.lookAt(lx,ly,0);
+    renderer.render(scene,cam);
+    raf=requestAnimationFrame(frame)}
+  return{start(){run=true;t0=0;raf=requestAnimationFrame(frame)},dispose(){run=false;ro.disconnect();io.disconnect();cancelAnimationFrame(raf);renderer.dispose();cv.remove()}}}
+
+/* ---------- відповідь отримувача: повноекранна 3D-сцена ---------- */
+async function playAnswer(inv,ans,after){
+  const kind=TYPES[inv.type].sc,yes=ans==='YES';
+  const texts={YES:TYPES[inv.type].rom?['Ура! Серце вибухнуло від радості 💖','Вони домовились — зайчики святкують']:['Ура! Усі святкують 🎉','Зайчики такі раді, що аж зірки з очей'],NO:inv.noMode==='grow'?['Ой… «Ні» не витримала й луснула 💔','Зайчик залишився сам і гірко плаче. Йому так шкода…']:[['Зайчик залишився сам…','Йому сумно, але він усе розуміє'],['Серденько тихенько тріснуло…','Зайчик витирає сльози лапкою'],['Ех… а він так сподівався','Зайчик сумує й шморгає носом']][Math.floor(Math.random()*3)],MAYBE:['Зайчик чекає й сумує…','Подумай — він нікуди не піде']}[ans];
+  const ov=h('div',{class:'fin '+(yes?'yes':'sad')}),cap=h('div',{class:'fincap'},texts[0],h('small',{},texts[1]));ov.append(cap);document.body.append(ov);
+  const fxc=$('#fx');const z0=fxc.style.zIndex;fxc.style.zIndex=80;fxc.style.display='block';
+  let sc=null,closed=false,ready=false;
+  const end=()=>{if(closed)return;closed=true;sc&&sc.dispose();fxc.style.zIndex=z0;ov.classList.add('out');setTimeout(()=>ov.remove(),360);after&&after()};
+  ov.addEventListener('click',()=>{if(ready)end()});
+  setTimeout(()=>cap.classList.add('on'),yes?1500:2200);
+  const fin=()=>{ready=true;setTimeout(end,1600)};
+  if(!S.reduced&&inv.anim!=='off'&&inv.bunnies!==false){
+    try{await loadScript(URL_THREE)}catch(e){}
+    if(window.THREE){const stage=h('div',{class:'finstage'});ov.prepend(stage);
+      sc=bunnyScene(stage,{burst:(x,y,n)=>{if(yes)fx.burst(x,y,n||120)},flash:()=>{ov.classList.add('flash');fx.rain(70)},done:fin},{kind,rom:!!TYPES[inv.type].rom,c1:inv.bun1,c2:inv.bun2,phase:yes?'yes':ans==='MAYBE'?'maybe':'no'});
+      if(sc){sc.start();return}stage.remove()}}
+  // запасний варіант без WebGL / з вимкненою анімацією
+  ov.append(h('div',{class:'finemoji'},yes?'🐰💞🐰':'🐰💧'));cap.classList.add('on');
+  if(yes){fx.burst(innerWidth/2,innerHeight*.45,120);fx.rain(50)}
+  setTimeout(()=>{ready=true;end()},S.reduced?1200:2600)}
+
+/* ---------- зайчик, що соромиться (SVG) ---------- */
+function shyBunny(getName){
+  const nm=()=>(getName&&getName()||'').trim(),base=()=>nm()?`Ой, ${nm()}… це ти? Я соромлюсь 🙈`:'Ой… хто це? Я соромлюсь 🙈',peek=()=>nm()?`${nm()}, привіт! Я лише одним оком 👀`:'Ой, він мене помітив… 👀';
+  const cap=h('div',{class:'shycap'},base());let to=0;
+  const w=h('div',{class:'shywrap',onmouseenter:()=>{cap.textContent=peek()},onmouseleave:()=>{cap.textContent=base()},onclick:()=>{w.classList.add('peek');cap.textContent=peek();clearTimeout(to);to=setTimeout(()=>{w.classList.remove('peek');cap.textContent=base()},2200);const r=w.getBoundingClientRect();fx.burst(r.left+r.width/2,r.top+r.height*.28,36)}});
+  w.update=()=>{if(!w.matches(':hover')&&!w.classList.contains('peek'))cap.textContent=base()};
+  w.innerHTML=`<svg class="shy" viewBox="0 0 200 232" aria-hidden="true">
+<ellipse cx="100" cy="222" rx="54" ry="8" fill="rgba(0,0,0,.2)"/>
+<ellipse cx="100" cy="170" rx="54" ry="50" fill="#fff"/><ellipse cx="100" cy="180" rx="33" ry="32" fill="#ffe3ee"/>
+<ellipse cx="64" cy="212" rx="21" ry="11" fill="#fff"/><ellipse cx="136" cy="212" rx="21" ry="11" fill="#fff"/>
+<g class="head">
+<g class="ear l"><ellipse cx="72" cy="36" rx="14" ry="44" fill="#fff"/><ellipse cx="72" cy="40" rx="7" ry="31" fill="#ffb3cf"/></g>
+<g class="ear r"><ellipse cx="128" cy="36" rx="14" ry="44" fill="#fff"/><ellipse cx="128" cy="40" rx="7" ry="31" fill="#ffb3cf"/></g>
+<circle cx="100" cy="98" r="50" fill="#fff"/>
+<ellipse class="blush" cx="63" cy="112" rx="12" ry="8" fill="#ff6f9f"/><ellipse class="blush" cx="137" cy="112" rx="12" ry="8" fill="#ff6f9f"/>
+<g class="eyes"><ellipse cx="82" cy="96" rx="5.5" ry="7" fill="#2b1a2e"/><ellipse cx="118" cy="96" rx="5.5" ry="7" fill="#2b1a2e"/><circle cx="84" cy="93" r="2" fill="#fff"/><circle cx="120" cy="93" r="2" fill="#fff"/></g>
+<ellipse cx="100" cy="111" rx="5" ry="4" fill="#ff86ae"/><path d="M94 117q6 6 12 0" fill="none" stroke="#2b1a2e" stroke-width="2" stroke-linecap="round"/>
+<ellipse class="paw l" cx="78" cy="101" rx="18" ry="13" fill="#fff" stroke="#ffd0e1" stroke-width="3"/>
+<ellipse class="paw r" cx="122" cy="101" rx="18" ry="13" fill="#fff" stroke="#ffd0e1" stroke-width="3"/>
+</g></svg><span class="shyh a">💗</span><span class="shyh b">💖</span><span class="shyh c">✨</span>`;
+  const box=h('div',{},w,cap);box.update=w.update;return box}
+
+/* ============================================================
+   QR — тепла «листівка» замість сухого чорно-білого квадрата
+   ============================================================ */
+const HEARTP='M0 8C0-2-14-2-14 8c0 10 14 16 14 24C0 24 14 18 14 8 14-2 0-2 0 8Z';
+function qrSvg(url,style,a1,a2){const q=qrcode(0,'H');q.addData(url);q.make();const n=q.getModuleCount(),c=10;
+  const finder=(r,k)=>(r<7&&k<7)||(r<7&&k>=n-7)||(r>=n-7&&k<7);
+  const hs=(x,y,s,al)=>`<path transform="translate(${x} ${y}) scale(${s})" d="${HEARTP}" fill="#fff" opacity="${al}"/>`;
+  const mods=(ox,oy,fill,plain)=>{let s='';for(let r=0;r<n;r++)for(let k=0;k<n;k++){if(!q.isDark(r,k))continue;const x=ox+k*c,y=oy+r*c;
+      if(plain)s+=`<rect x="${x}" y="${y}" width="${c}" height="${c}" fill="${fill}"/>`;else{const rr=finder(r,k)?2.5:4.4;s+=`<rect x="${x+.3}" y="${y+.3}" width="${c-.6}" height="${c-.6}" rx="${rr}" fill="${fill}"/>`}}return s};
+  const wrap=(W,H,body)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" shape-rendering="geometricPrecision">${body}</svg>`;
+  const grad=`<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${a1}"/><stop offset="1" stop-color="${a2}"/></linearGradient><linearGradient id="m" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a0124f"/><stop offset="1" stop-color="#4b1fa8"/></linearGradient></defs>`;
+  if(style==='card'){const pad=4,plate=(n+pad*2)*c,off=34,W=plate+off*2,top=92,Ht=top+plate+128,F='font-family="Arial,Helvetica,sans-serif" text-anchor="middle" fill="#fff"';
+    let o=grad+`<rect width="${W}" height="${Ht}" rx="44" fill="url(#g)"/>`;
+    o+=hs(46,40,1.2,.85)+hs(W-48,34,1,.7)+hs(W-40,Ht-40,1.2,.8)+hs(38,Ht-34,1,.7)+hs(W/2-110,30,.7,.6)+hs(W/2+112,56,.7,.6);
+    o+=`<text x="${W/2}" y="64" font-size="44" font-weight="800" ${F}>Підемо?</text>`;
+    o+=`<rect x="${off}" y="${top}" width="${plate}" height="${plate}" rx="28" fill="#fff"/>`+mods(off+pad*c,top+pad*c,'url(#m)',false);
+    o+=`<text x="${W/2}" y="${top+plate+46}" font-size="28" font-weight="800" ${F}>Для тебе є запрошення</text><text x="${W/2}" y="${top+plate+82}" font-size="22" ${F} opacity=".92">Наведи камеру — там сюрприз</text>`;
+    return wrap(W,Ht,o)}
+  const pad=style==='plain'?4:(style==='round'?4:6),fr=style==='heart'||style==='prem',off=fr?90:0,plate=(n+pad*2)*c,W=plate+off*2,q0=n*c;let o='';
+  if(fr){o+=grad.replace('id="m"','id="m"')+`<filter id="b"><feGaussianBlur stdDeviation="14"/></filter><rect width="${W}" height="${W}" rx="40" fill="url(#g)"/>`;
+    if(style==='prem')o+=`<rect x="${off-8}" y="${off-8}" width="${plate+16}" height="${plate+16}" rx="42" fill="#fff" opacity=".55" filter="url(#b)"/>`;
+    o+=hs(45,40,1.3,.9)+hs(W-45,50,1,.7)+hs(40,W-60,1,.7)+hs(W-48,W-50,1.3,.9)+hs(W/2,W-14,.8,.8)+hs(W/2,6,.8,.8)}
+  o+=`<rect x="${off}" y="${off}" width="${plate}" height="${plate}" rx="${fr?28:style==='round'?26:0}" fill="#fff"/>`+mods(off+pad*c,off+pad*c,fr?'url(#m)':'#111',style==='plain');
+  if(style==='prem'){const cx=W/2,cy=W/2,s=q0*.15;o+=`<circle cx="${cx}" cy="${cy}" r="${s*.78}" fill="#fff"/><path transform="translate(${cx} ${cy-s*.5}) scale(${s/22})" d="${HEARTP}" fill="#e0245e"/>`}
+  return wrap(W,W,o)}
+async function svgToCanvas(svg,px=1024){const m=svg.match(/viewBox="0 0 ([\d.]+) ([\d.]+)"/),W=+m[1],H=+m[2];const img=new Image();img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);await img.decode();const cv=document.createElement('canvas');cv.width=px;cv.height=Math.round(px*H/W);cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);return cv}
+async function qrVerify(svg,url){try{await loadScript(URL_JSQR);const cv=await svgToCanvas(svg,700),im=cv.getContext('2d').getImageData(0,0,cv.width,cv.height),r=jsQR(im.data,cv.width,cv.height);return !!r&&r.data===url}catch(e){return null}}
+async function qrPanel(inv,tok){await loadScript(URL_QR);const url=urlOf(tok||inv.token);
+  let style='heart';const box=h('div',{class:'qrbox'}),note=h('div',{class:'small',style:'text-align:center;min-height:20px;margin-top:8px'});
+  const styles=[['heart','💖 Серце'],['card','💌 Листівка'],['round','Круглий'],['plain','Простий']];
+  let svg='';async function draw(){svg=qrSvg(url,style,'#ff4d8d','#ffb36b');box.innerHTML=svg;note.textContent='Перевіряю, чи легко сканується…';const ok=await qrVerify(svg,url);note.textContent=ok===true?'✓ Перевірено: телефон відкриє запрошення з першого разу':ok===false?'⚠ Цей стиль сканується гірше — візьми «Листівку» або «Простий»':'Перевірку зараз зробити не вийшло, але код робочий'}
+  const chips=h('div',{class:'chips'},styles.map(([k,n])=>h('button',{class:'chip'+(k===style?' on':''),onclick:e=>{style=k;[...chips.children].forEach(c=>c.classList.toggle('on',c===e.currentTarget));draw()}},n)));
+  const png=async()=>new Promise(r=>svgToCanvas(svg,1100).then(c=>c.toBlob(r,'image/png')));
+  const dl=async()=>{const b=await png(),a=h('a',{href:URL.createObjectURL(b),download:'pidemo-qr.png'});document.body.append(a);a.click();a.remove();toast('Якщо картинка не збереглась — затисни QR і обери «Зберегти»')};
+  const sh=async()=>{const b=await png(),f=new File([b],'pidemo-qr.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'Підемо?',text:'Скануй — для тебе є запрошення 💌'});return}catch(e){if(e.name==='AbortError')return}}copy(url)};
+  const node=h('div',{class:'stack'},h('div',{class:'small',style:'text-align:center'},'Роздрукуй, закинь у сторіс або залиш на серветці в кав\'ярні — запрошення відкриється одним скануванням.'),chips,box,note,h('div',{class:'row'},h('button',{class:'btn ghost sm',onclick:dl},'Зберегти картинку'),h('button',{class:'btn sm',onclick:sh},'Надіслати QR')));draw();return node}
+
+/* ---------- серце з багатьох «I love you» ---------- */
+function ilyHeart(done){
+  const ov=h('div',{class:'ily'}),cv=h('canvas'),ctx=cv.getContext('2d'),dpr=Math.min(devicePixelRatio||1,2),S0=Math.min(innerWidth-20,innerHeight*.72,560);
+  cv.width=cv.height=S0*dpr;cv.style.width=cv.style.height=S0+'px';ctx.scale(dpr,dpr);ov.append(cv);document.body.append(ov);
+  const k=S0/37,hp=()=>{ctx.beginPath();for(let i=0;i<=120;i++){const t=i/120*6.2832,x=16*Math.pow(Math.sin(t),3),y=-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t));const px=S0/2+x*k,py=S0/2+(y-2.5)*k;i?ctx.lineTo(px,py):ctx.moveTo(px,py)}ctx.closePath()};
+  const f=Math.max(11,S0/27),rows=Math.ceil(S0/(f*1.18)),word='I love you  ♥  ',t0=performance.now();let raf=0,fin=false;
+  const end=()=>{if(fin)return;fin=true;cancelAnimationFrame(raf);ov.classList.add('out');setTimeout(()=>{ov.remove();done&&done()},450)};
+  ov.addEventListener('click',end);setTimeout(end,3900);
+  function draw(now){const t=(now-t0)/1000,beat=1+.025*Math.sin(t*5.5),grow=ease.out(clamp(t/.9,0,1));
+    ctx.clearRect(0,0,S0,S0);ctx.save();ctx.translate(S0/2,S0/2);ctx.scale(beat*grow,beat*grow);ctx.translate(-S0/2,-S0/2);
+    hp();ctx.save();ctx.shadowColor='rgba(255,60,120,.9)';ctx.shadowBlur=28;ctx.fillStyle='rgba(255,40,100,.22)';ctx.fill();ctx.restore();
+    hp();ctx.clip();ctx.font=`800 ${f}px Arial,Helvetica,sans-serif`;ctx.textBaseline='middle';const ww=ctx.measureText(word).width;
+    for(let r=0;r<rows;r++){const y=r*f*1.18+f*.6,reveal=clamp((t-.25-r*.045)/.35,0,1);if(!reveal)continue;ctx.globalAlpha=reveal;ctx.fillStyle=`hsl(${345+Math.sin(r*.5+t*2)*14},95%,${70+Math.sin(r*.7+t*3)*12}%)`;
+      const off=((t*(r%2?34:-34)+r*13)%ww+ww)%ww;for(let x=-ww+off;x<S0+ww;x+=ww)ctx.fillText(word,x,y)}
+    ctx.restore();ctx.save();ctx.translate(S0/2,S0/2);ctx.scale(beat*grow,beat*grow);ctx.translate(-S0/2,-S0/2);hp();ctx.lineWidth=3;ctx.strokeStyle='rgba(255,200,220,.85)';ctx.shadowColor='#ff3d77';ctx.shadowBlur=18;ctx.stroke();ctx.restore();
+    raf=requestAnimationFrame(draw)}
+  raf=requestAnimationFrame(draw)}
+
+/* ---------- навігація ---------- */
+let cleanup=()=>{};
+function show(id){cleanup();cleanup=()=>{};document.querySelectorAll('.back').forEach(b=>b.remove());document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===id));$('#'+id).scrollTop=0;$('#rm').style.display=''}
+const F=(label,node)=>h('div',{},h('label',{class:'l'},label),node);
+const inp=(d,k,o={})=>h('input',Object.assign({class:'field',value:d[k],oninput:e=>{d[k]=e.target.value}},o));
+const chipsRow=(items,cur,fn)=>h('div',{class:'chips'},items.map(([k,n,dis])=>h('button',{class:'chip'+(cur===k?' on':''),disabled:!!dis,onclick:()=>fn(k)},n)));
+const H2=(t)=>h('h2',{style:'font-size:26px'},t);
+const req=()=>h('span',{class:'req'},' *');
+const fmtT=t=>new Date(t).toLocaleString('uk-UA',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+const bad=el=>{el.classList.add('bad');setTimeout(()=>el.classList.remove('bad'),1800)};
+
+/* ---------- налаштування (кнопка вгорі справа) ---------- */
+$('#rm').addEventListener('click',()=>settingsSheet());
+document.body.classList.toggle('reduce',S.reduced);
+function settingsSheet(){const n=h('div',{class:'stack'});let close;const d=()=>{n.innerHTML='';
+  n.append(h('h2',{style:'font-size:22px'},'Налаштування'),F('Анімації',chipsRow([['full','Усі'],['lite','Менше'],['off','Вимкнути']],S.reduced?'off':S.lite?'lite':'full',k=>{S.reduced=k==='off';S.lite=k==='lite';S.animOff=S.reduced;save();document.body.classList.toggle('reduce',S.reduced);fx.kick();d()})),
+    h('p',{class:'small',style:'margin:0'},'«Вимкнути» прибирає літаючі серця й 3D-сцени — зручно, якщо телефон гріється або від руху нудить.'),
+    ('Notification' in window&&Notification.permission==='default')&&h('button',{class:'btn ghost',onclick:()=>Notification.requestPermission().then(()=>d())},'🔔 Увімкнути сповіщення в браузері'),
+    h('button',{class:'btn ghost',onclick:()=>{close();supportSheet()}},'💬 Служба підтримки'),
+    SERVER&&h('div',{class:'card stack'},h('b',{},'Мій акаунт'),h('div',{class:'small'},'Цей код повертає твої запрошення й тариф на іншому пристрої. Нікому його не показуй.'),h('button',{class:'btn ghost sm',onclick:()=>copy(S.uid+':'+S.key,'Код відновлення скопійовано ✓')},'Скопіювати код відновлення'),
+      (()=>{const i=h('input',{class:'field',placeholder:'Вставити код відновлення',style:'min-height:46px'});return h('div',{class:'stack'},i,h('button',{class:'btn sm',onclick:async()=>{const m=/^([A-Za-z0-9]{12}):([A-Za-z0-9]{24,48})$/.exec(i.value.trim());if(!m){bad(i);return toast('Код має вигляд xxxxxxxxxxxx:yyyy…')}
+        const old=[S.uid,S.key];S.uid=m[1];S.key=m[2];try{await api('/api/me');await sync();close();home();toast('Акаунт відновлено ✓')}catch(e){S.uid=old[0];S.key=old[1];toast('Код не підійшов')}}},'Відновити акаунт'))})()),
+    h('div',{class:'row'},h('button',{class:'btn ghost sm',onclick:()=>{close();legalSheet('privacy')}},'Конфіденційність'),h('button',{class:'btn ghost sm',onclick:()=>{close();legalSheet('terms')}},'Умови'),h('button',{class:'btn ghost sm',onclick:()=>{close();legalSheet('offer')}},'Оферта')))};d();close=sheet(n)}
+
+/* ============================================================
+   ЮРИДИЧНІ ТЕКСТИ (шаблон — перед запуском перевір із юристом і підстав дані SELLER)
+   ============================================================ */
+const LEGAL={
+privacy:{t:'Політика конфіденційності',p:[
+['Хто ми',`Сервіс «Підемо?» (далі — Сервіс) надає ${SELLER.name}, ідентифікаційний код ${SELLER.code}, ${SELLER.addr}. Контакт з питань даних: ${SELLER.email}.`],
+['Які дані ми обробляємо','Те, що ти вводиш сам(а): ім\'я адресата, текст запрошення, дату, місце, фото, секретне повідомлення; контакти для сповіщень (Telegram chat ID, номер телефону); ПІБ платника та персональний код для підтвердження оплати; звернення до підтримки й скарги; відповідь адресата («так», «подумаю», «ні») та обране ним місце й час; технічні дані (IP-адреса, тип браузера, час запиту).'],
+['Навіщо','Щоб створити запрошення й показати його за посиланням; повідомити автора про відповідь; підтвердити оплату й надати тариф; відповісти на звернення; захистити Сервіс від спаму та зловживань.'],
+['Підстави','Виконання договору (публічна оферта), твоя згода (сповіщення, контакти), законний інтерес (безпека). Надсилаючи посилання, ти підтверджуєш, що маєш право ділитися наданими даними й фото.'],
+['Строки зберігання','Запрошення й відповіді зберігаються, поки автор їх не видалить, але не довше 12 місяців після останньої активності. Дані про платежі — стільки, скільки вимагає облікове законодавство України.'],
+['Кому ми передаємо дані','Лише постачальникам, без яких Сервіс не працює: хостинг, Telegram (сповіщення), SMS-шлюз, банк (підтвердження переказів), постачальник ШІ (Anthropic) — йому передається лише ідея, яку ти вписав для генерації тексту, тож не вказуй там чутливих даних, — та карти OpenStreetMap. Ми не продаємо персональні дані.'],
+['Твої права','Ти можеш отримати копію своїх даних, виправити або видалити їх, обмежити обробку й відкликати згоду — напиши на '+SELLER.email+' або в службу підтримки в застосунку. Ти також маєш право звернутися до Уповноваженого Верховної Ради України з прав людини.'],
+['Діти','Сервіс не призначений для осіб до 16 років.'],
+['Браузерне сховище','Ми зберігаємо налаштування й твої запрошення в локальному сховищі браузера. Його можна очистити в налаштуваннях браузера.'],
+['Зміни','Ми можемо оновлювати цю політику; актуальна версія завжди тут.']]},
+terms:{t:'Умови користування',p:[
+['Про що це','«Підемо?» — сервіс особистих інтерактивних запрошень за посиланням. Користуючись ним, ти погоджуєшся з цими умовами.'],
+['Правила','Заборонено використовувати Сервіс для спаму, залякування, переслідування, образ, дискримінації, шахрайства, розповсюдження чужих фото чи персональних даних без дозволу, а також для будь-якого незаконного контенту.'],
+['Твій контент','Ти відповідаєш за текст, фото й дані, які додаєш. Ми можемо вимкнути запрошення, що порушує правила чи закон, без попередження.'],
+['Відповідь адресата','Відповідь завжди добровільна. Жартівливі налаштування кнопок (які тікають, зменшуються чи зникають) не дають права тиснути на людину чи вимагати відповіді. Ми додаємо адресату можливість відповісти «не зараз».'],
+['Строк дії посилання','Посилання працює, доки автор його не видалить або тариф дозволяє зберігання. Автор може видалити запрошення в кабінеті будь-коли.'],
+['Скарги й підтримка','Будь-яку скаргу можна подати зі сторінки запрошення, вказавши конкретну причину. Звернення до підтримки опрацьовуємо в розумний строк.'],
+['Відповідальність','Сервіс надається «як є». Ми докладаємо зусиль, щоб сповіщення доходили, але не відповідаємо за збої мереж, Telegram, операторів зв\'язку чи пристроїв.'],
+['Право','До цих умов застосовується законодавство України.']]},
+offer:{t:'Публічна оферта',p:[
+['Сторони',`Ця публічна оферта — пропозиція ${SELLER.name}, код ${SELLER.code}, ${SELLER.addr}, ${SELLER.email} (далі — Виконавець) будь-якій особі (далі — Користувач) укласти договір про надання цифрових послуг Сервісу «Підемо?».`],
+['Послуги й ціни',`Перше запрошення — безкоштовне, з усіма функціями (пробне, один раз на користувача). Далі: «${PLANS.single.n}» — ${PLANS.single.p} грн (базові теми, одне фото); тариф «${PLANS.week.n}» — ${PLANS.week.p} грн на 7 днів; тариф «${PLANS.month.n}» — ${PLANS.month.p} грн на 30 днів. Тарифи дають безліміт запрошень, PRO/VIP-теми, до 5 фото, власний фон, налаштування кнопки «Ні», секретне повідомлення, QR-серце та SMS-сповіщення.`],
+['Оплата','Оплата — переказом на картку Виконавця. У призначенні переказу Користувач зазначає свій персональний код із Сервісу або ПІБ, а в Сервісі вводить своє ПІБ. Послуга надається після підтвердження переказу Виконавцем.'],
+['Строк тарифу','Тариф діє з моменту підтвердження оплати протягом 7 або 30 днів і вимикається автоматично. Автопродовження немає. Нове підтвердження оплати продовжує дію тарифу.'],
+['Повернення коштів','Якщо послугу не надано з вини Виконавця, кошти повертаються за зверненням у підтримку. Надана цифрова послуга поверненню не підлягає, окрім випадків, передбачених законом про захист прав споживачів.'],
+['Акцепт','Акцептом оферти є натискання галочки згоди під час публікації запрошення або здійснення оплати.'],
+['Персональні дані','Обробка даних описана в Політиці конфіденційності.'],
+['Реквізити',`${SELLER.name}, код ${SELLER.code}, ${SELLER.addr}, ${SELLER.email}.`]]}};
+function legalSheet(tab='privacy'){const n=h('div',{class:'stack legal'});const d=()=>{n.innerHTML='';const L=LEGAL[tab];n.append(h('div',{class:'chips'},[['privacy','Конфіденційність'],['terms','Умови'],['offer','Оферта']].map(([k,l])=>h('button',{class:'chip'+(tab===k?' on':''),onclick:()=>{tab=k;d()}},l))),h('h2',{style:'font-size:22px'},L.t),...L.p.map(([a,b])=>h('div',{},h('h3',{},a),h('p',{},b))))};d();sheet(n)}
+
+/* ---------- служба підтримки ---------- */
+function supportSheet(topic){let tp=topic||'help';const n=h('div',{class:'stack'});let close;
+  const contact=h('input',{class:'field',placeholder:'Telegram @нік, телефон або пошта',maxlength:80}),msg=h('textarea',{class:'field',placeholder:'Опиши, що сталося або що потрібно. Чим конкретніше — тим швидше допоможемо.',maxlength:800,style:'min-height:120px'});
+  const chips=h('div',{class:'chips'});const drawC=()=>{chips.innerHTML='';[['help','Питання'],['pay','Оплата'],['bug','Щось зламалось'],['idea','Ідея']].forEach(([k,l])=>chips.append(h('button',{class:'chip'+(tp===k?' on':''),onclick:()=>{tp=k;drawC()}},l)))};drawC();
+  const lk=(href,txt)=>h('a',{class:'btn ghost sm',style:'text-decoration:none;display:flex;align-items:center;justify-content:center',href,target:'_blank',rel:'noopener noreferrer'},txt);
+  n.append(h('h2',{style:'font-size:22px'},'Служба підтримки'),h('p',{class:'small',style:'margin:0'},'Залиш, як із тобою зв\'язатись, — ми напишемо самі.'),chips,F(h('span',{},'Як з тобою зв\'язатись',req()),contact),F(h('span',{},'Повідомлення',req()),msg),
+    h('button',{class:'btn',onclick:()=>{if(contact.value.trim().length<4){bad(contact);return toast('Вкажи, як з тобою зв\'язатись')}if(msg.value.trim().length<10){bad(msg);return toast('Опиши питання хоча б кількома словами')}
+      const t={id:token().slice(0,6),t:Date.now(),topic:tp,contact:contact.value.trim(),msg:msg.value.trim(),status:'new'};S.tickets.push(t);save();
+      try{fetch(SUPPORT_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},keepalive:true,body:JSON.stringify({kind:'support',...t})}).catch(()=>{})}catch(e){}
+      close();toast('Дякуємо! Ми зв\'яжемось з тобою 💌')}},'Надіслати'),
+    (SUPPORT.tg||SUPPORT.email)&&h('div',{class:'row'},SUPPORT.tg&&lk('https://t.me/'+SUPPORT.tg.replace('@',''),'Telegram'),SUPPORT.email&&lk('mailto:'+SUPPORT.email,'Пошта')));
+  close=sheet(n)}
+
+/* ============================================================
+   ГОЛОВНА
+   ============================================================ */
+let homeName='';
+function home(){applyTheme('app');show('home');clearUrl();const el=$('#home');el.innerHTML='';
+  let taps=0,tt=0;
+  const logo=h('h1',{class:'logo',onclick:()=>{taps++;clearTimeout(tt);tt=setTimeout(()=>taps=0,2500);if(taps>=5){taps=0;admin()}}},'Підемо?');
+  const bunny=shyBunny(()=>homeName);
+  const nm=h('input',{class:'field',style:'text-align:center;max-width:320px;margin:0 auto',placeholder:'Кого хочеш покликати? Введи ім\'я',maxlength:40,value:homeName,oninput:e=>{homeName=e.target.value;bunny.update()}});
+  el.append(h('div',{class:'wrap'},
+    h('div',{class:'top'},h('span',{class:'small'},'💌 pidemo'),h('button',{class:'pill',style:'margin-right:128px',onclick:mine},'Мої запрошення'+(unread()?' · 🔔'+unread():''))),
+    h('div',{class:'hero'},logo,h('p',{class:'sub',style:'margin:12px auto 16px;max-width:330px'},'Запроси на побачення, каву чи просто погуляти — так, щоб усміхнулись ще до відповіді.'),
+      bunny,nm,h('div',{style:'height:14px'}),h('button',{class:'btn',onclick:()=>startWizard()},'Створити запрошення'),h('p',{class:'small',style:'margin-top:10px'},'Перше запрошення — безкоштовно, з усіма можливостями 🎁')),
+    h('h2',{style:'font-size:22px;margin:30px 0 14px'},'Як це працює'),
+    h('div',{class:'steps'},[['Скажи, куди кличеш','Побачення, кава, день народження чи зізнання — обери настрій.'],['Дай ШІ допомогти зі словами','Розкажи, що відчуваєш, — він складе гарний текст. Або напиши сам(а).'],['Надішли одне посилання','Особисте, і ніхто його не вгадає.'],['Дізнайся відповідь','Зайчики зіграють сценку, а тобі прийде повідомлення: «так», «подумаю» чи «ні».']].map(([a,b],i)=>h('div',{class:'card'},h('div',{class:'n'},i+1),h('div',{},h('b',{},a),h('div',{class:'small'},b))))),
+    h('h2',{style:'font-size:22px;margin:30px 0 8px'},'Для чого кличуть'),
+    h('div',{class:'chips'},Object.values(TYPES).map(t=>h('span',{class:'chip'},t.e+' '+t.n))),
+    h('div',{class:'card stack',style:'margin-top:26px'},h('b',{},'Тарифи'),h('div',{class:'small'},'🎁 Перше запрошення — безкоштовно, з усіма PRO/VIP-функціями'),h('div',{class:'small'},`✉️ Одне запрошення — ${PLANS.single.p} грн`),h('div',{class:'small'},`⭐ Тиждень — ${PLANS.week.p} грн · безліміт, PRO/VIP, до 5 фото, QR-серце`),h('div',{class:'small'},`👑 Місяць — ${PLANS.month.p} грн · те саме, вигідніше`)),
+    h('div',{class:'row',style:'margin-top:22px;justify-content:center;flex-wrap:wrap;gap:8px'},h('button',{class:'pill',onclick:()=>supportSheet()},'💬 Підтримка'),h('button',{class:'pill',onclick:()=>legalSheet('privacy')},'Конфіденційність'),h('button',{class:'pill',onclick:()=>legalSheet('terms')},'Умови'),h('button',{class:'pill',onclick:()=>legalSheet('offer')},'Публічна оферта')),
+    h('p',{class:'small',style:'margin:18px 0 6px;text-align:center'},'Без реклами. Тому, кого запрошуєш, платити ніколи не доведеться 💛')))}
+
+/* ============================================================
+   МАЙСТЕР СТВОРЕННЯ
+   ============================================================ */
+function startWizard(){S.draft=newDraft();S.draft.name=homeName.trim();S.draft.title=TYPES[S.draft.type].ph;S.step=0;wizard()}
+const STEPS=['Тип','Слова','Коли','Де','Вигляд','Відповіді','Готово'];
+function validate(i,d){
+  if(i===1&&d.multi){if(d.guests.length<2)return['g-name-0','Додай хоча б двох гостей'];for(let k=0;k<d.guests.length;k++){const g=d.guests[k];if(!g.name.trim())return['g-name-'+k,'Вкажи ім\'я гостя №'+(k+1)];if(g.noteOn&&g.note.trim().length<3)return['g-note-'+k,'Напиши особистий лист для '+g.name.trim()+' або вимкни його']}if(!d.title.trim())return['title','Напиши заголовок'];if(d.body.trim().length<3)return['body','Напиши загальний лист — або попроси ШІ']}
+  else if(i===1){if(!d.name.trim())return['name','Вкажи ім\'я того, кого кличеш'];if(!d.title.trim())return['title','Напиши заголовок'];if(d.body.trim().length<3)return['body','Напиши повідомлення — або попроси ШІ']}
+  if(i===2&&d.dateMode==='set'){if(!d.date)return['date','Обери дату'];if(!d.time)return['time','Обери час']}
+  if(i===3){if(d.placeMode==='manual'){if(!d.place.trim())return['place','Вкажи назву місця'];if(!d.address.trim())return['address','Вкажи адресу']}if(d.placeMode==='map'&&!d.lat)return['map','Познач точку на карті']}
+  if(i===5){if(d.secretOn&&d.secretText.trim().length<3)return['secret','Напиши секретне повідомлення або вимкни його'];if(!(+d.noCount>=1&&+d.noCount<=15))return['nocount','Кількість натискань — від 1 до 15']}
+  if(i===6&&!d.consent)return['consent','Підтверди згоду з умовами, щоб опублікувати'];
+  return null}
+function wizard(){const d=S.draft;show('wizard');applyTheme(d.theme,d,{anim:d.anim});const el=$('#wizard');el.innerHTML='';
+  const body=h('div',{class:'body'}),n=STEPS.length,fns=[s1,s2,s3,s4,s5,s6,s7];
+  const goBack=()=>{if(S.step>0){S.step--;wizard()}else home()};
+  const next=()=>{const e=validate(S.step,d);if(e){toast(e[1]);const t=body.querySelector('[data-f="'+e[0]+'"]');if(t){bad(t);t.scrollIntoView({block:'center',behavior:'smooth'});t.focus&&t.focus()}return}S.step++;wizard()};
+  const seg=h('div',{class:'seg'},STEPS.map((s,i)=>h('button',{class:i<S.step?'done':i===S.step?'cur':'','aria-label':s,onclick:()=>{if(i<S.step){S.step=i;wizard()}}})));
+  body.append(h('div',{class:'top',style:'padding-top:10px'},h('div',{style:'display:flex;gap:8px'},h('button',{class:'pill','aria-label':'Назад',onclick:goBack},'←'),h('button',{class:'pill','aria-label':'Закрити',onclick:home},'✕')),h('b',{style:'margin-right:128px'},`${S.step+1}/${n} · ${STEPS[S.step]}`)),seg,fns[S.step](d));
+  const bar=h('div',{class:'bar'},S.step>0&&h('button',{class:'btn ghost',style:'flex:0 0 36%',onclick:goBack},'Назад'),
+    S.step<n-1?h('button',{class:'btn',onclick:next},'Далі'):h('button',{class:'btn',onclick:publish},'Опублікувати'));
+  el.append(h('div',{class:'wz'},body,bar))}
+const tag=(k,o={})=>Object.assign({'data-f':k},o);
+const proTag=(vip)=>h('span',{class:'badge'},vip?'VIP':'PRO');
+
+function s1(d){return h('div',{class:'stack'},H2('Що за запрошення?'),h('div',{class:'grid2'},Object.entries(TYPES).map(([k,t])=>h('button',{class:'type'+(d.type===k?' on':''),onclick:()=>{d.type=k;if(!d.themeTouched)d.theme=t.theme;if(!d.titleTouched)d.title=t.ph;d.noMode=t.rom?'run':'plain';if(t.rom)d.multi=false;if(!['date','confess'].includes(k))d.secretOn=false;if(k==='bday'){d.dateMode='set';if(d.placeMode==='partner')d.placeMode='manual'}wizard()}},h('span',{},t.e),t.n))),h('p',{class:'small'},'Від типу залежить, яку сценку зіграють зайчики й які будуть кнопки. Усе можна змінити.'))}
+
+/* ---- ШІ-автор ---- */
+function localWrite(d){const t=TYPES[d.type],hi=d.name?d.name.trim()+', ':'',W=d.date?' '+fmtDate(d.date):'',A=t.act,idea=(d.aiIdea||'').trim().replace(/[.!?…]+$/,'');
+  const T={
+    gentle:[`${hi}мені дуже хочеться ${A}${W}. Без поспіху й зайвих слів — просто бути поруч.`,`${hi}маю до тебе маленьке прохання: давай ${A}${W}. Мені буде затишно, якщо ти скажеш «так».`,`${hi}ти робиш мої дні теплішими, тому наважуюсь запитати: чи не хочеш ${A}${W}?`],
+    fun:[`${hi}оголошую маленьку пригоду: ${A}${W}! Умови прості — гарний настрій і жодної нудьги. Ти в ділі?`,`${hi}терміново! Є план — ${A}${W}. Обіцяю сміх, дурниці й чудову компанію. Приймаєш виклик?`,`${hi}розслідування показало: найкращий кандидат, щоб ${A}${W}, — це ти. Відмовок не приймаю 😄`],
+    romantic:[`${hi}найкращі моменти трапляються з тобою. Давай ${A}${W}?`,`${hi}думаю про тебе частіше, ніж зізнаюсь. Тож ризикну: давай ${A}${W}?`,`${hi}у мене вже є план — ${A}${W}. Не вистачає лише твоєї згоди.`],
+    short:[`${hi}давай ${A}${W}?`,`${cap1(A)}${W} — що скажеш?`,`${hi}є ідея: ${A}${W}. Ти як?`]};
+  const st=T[d.aiStyle]?d.aiStyle:'romantic',others=Object.keys(T).filter(k=>k!==st),pick=a=>a[Math.floor(Math.random()*a.length)];
+  const pool=[...T[st].slice().sort(()=>Math.random()-.5).slice(0,2),pick(T[pick(others)])];
+  return pool.map(s=>cap1(s)+(idea&&d.aiStyle!=='short'?` ${cap1(idea)}.`:''))}
+async function aiWrite(d){const t=TYPES[d.type];
+  try{const ctl=new AbortController(),to=setTimeout(()=>ctl.abort(),20000);
+    const r=await fetch(AI_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},signal:ctl.signal,body:JSON.stringify({type:d.type,typeName:t.n,activity:t.act,recipient:d.name,idea:d.aiIdea,style:d.aiStyle,date:d.date?fmtDate(d.date):'',place:d.place,lang:'uk'})});clearTimeout(to);
+    if(r.ok){const j=await r.json();if(Array.isArray(j.variants)&&j.variants.length)return{v:j.variants.slice(0,3).map(String),ai:true}}}catch(e){}
+  await new Promise(r=>setTimeout(r,900));return{v:localWrite(d),ai:false}}
+function s2(d){const box=h('div',{class:'stack'}),body=h('textarea',tag('body',{class:'field',maxlength:600,placeholder:'Напиши від себе або візьми готовий варіант нижче',oninput:e=>{d.body=e.target.value}}),d.body),res=h('div',{class:'stack'});let busy=false;
+  const sty=h('div',{class:'chips'});const drawSty=()=>{sty.innerHTML='';[['romantic','💗 Романтично'],['gentle','🌿 Лагідно'],['fun','😄 Весело'],['short','⚡ Коротко']].forEach(([k,n])=>sty.append(h('button',{class:'chip'+(d.aiStyle===k?' on':''),onclick:()=>{d.aiStyle=k;drawSty()}},n)))};drawSty();
+  const go=async()=>{if(busy)return;busy=true;res.innerHTML='';res.append(h('div',{class:'skel'}),h('div',{class:'skel'}));btn.disabled=true;btn.textContent='Підбираю слова…';
+    const r=await aiWrite(d);busy=false;btn.disabled=false;btn.textContent='✨ Ще варіанти';res.innerHTML='';
+    r.v.forEach(x=>res.append(h('button',{class:'vari',onclick:()=>{d.body=x;body.value=x;toast('Текст підставлено — можеш його підправити')}},x,h('span',{class:'vt'},'Взяти цей текст →'))));
+    if(!r.ai)res.append(h('div',{class:'small'},'Це підібрані фрази за твоєю ідеєю. Справжній ШІ підключається разом із сервером.'))};
+  const btn=h('button',{class:'btn',onclick:go},'✨ Написати за мене');
+  const rom=TYPES[d.type].rom;
+  const modeRow=!rom&&F('Кого кличеш',chipsRow([['one','Одну людину'],['many','Кількох людей']],d.multi?'many':'one',k=>{d.multi=k==='many';if(d.multi){d.dateMode='set';if(d.placeMode==='partner')d.placeMode='manual'}wizard()}));
+  const gmax=canPro()?20:3;
+  const guestsUI=h('div',{class:'stack'},h('div',{class:'small'},'Кожен гість отримає своє посилання й відповідатиме окремо. Особистий лист — за бажанням: його побачить лише цей гість.'),
+    ...d.guests.map((g,k)=>h('div',{class:'card stack'},h('div',{class:'row',style:'align-items:center'},h('input',tag('g-name-'+k,{class:'field',placeholder:'Ім\'я гостя №'+(k+1),value:g.name,maxlength:40,oninput:e=>{g.name=e.target.value}})),d.guests.length>2&&h('button',{class:'btn ghost sm',style:'flex:0 0 48px','aria-label':'Прибрати',onclick:()=>{d.guests.splice(k,1);wizard()}},'×')),
+      h('label',{class:'sw',style:'cursor:pointer'},h('div',{},h('b',{},'Особистий лист'),h('div',{class:'small'},'Додатково до загального тексту')),h('input',{type:'checkbox',checked:!!g.noteOn,onchange:e=>{g.noteOn=e.target.checked;wizard()}})),
+      g.noteOn&&h('div',{class:'stack'},h('textarea',tag('g-note-'+k,{class:'field',maxlength:400,placeholder:'Кілька теплих слів саме для цієї людини…',oninput:e=>{g.note=e.target.value}}),g.note),h('button',{class:'btn ghost sm',onclick:()=>{g.note=localWrite({...d,name:g.name,aiStyle:d.aiStyle})[0];wizard()}},'✨ Підкажи слова')))),
+    h('button',{class:'btn ghost',onclick:()=>{if(d.guests.length>=gmax)return toast(gmax===3?'Більше 3 гостей — у тарифі «Тиждень» чи «Місяць»':'Максимум 20 гостей');d.guests.push({name:'',note:'',noteOn:false});wizard()}},'+ Додати гостя'));
+  box.append(H2('Що написати?'),modeRow,d.multi?guestsUI:F(h('span',{},'Ім\'я того, кого кличеш',req()),inp(d,'name',tag('name',{placeholder:'Наприклад, Олена',maxlength:40}))),F(h('span',{},'Заголовок',req()),h('input',tag('title',{class:'field',value:d.title,maxlength:80,oninput:e=>{d.title=e.target.value;d.titleTouched=true}}))),F(h('span',{},d.multi?'Загальний лист (бачитимуть усі)':'Твоє повідомлення',req()),body),
+    h('div',{class:'card stack'},h('b',{},'✨ Допомога зі словами'),h('span',{class:'small'},'Розкажи своїми словами: кого кличеш, що відчуваєш, що хочеш запропонувати. З цього складемо теплий текст.'),
+      h('textarea',{class:'field',style:'min-height:92px',maxlength:300,placeholder:'Наприклад: ми давно не бачились, хочу показати їй улюблену кав\'ярню біля річки…',oninput:e=>{d.aiIdea=e.target.value}},d.aiIdea),sty,btn,res));return box}
+
+/* ---- Коли ---- */
+function s3(d){const bd=d.type==='bday'||d.multi;
+  return h('div',{class:'stack'},H2('Коли?'),
+    chipsRow([['set','Я вкажу сам(а)'],['partner','Хай обере той, кого кличу',bd]],d.dateMode,k=>{d.dateMode=k;wizard()}),
+    bd&&h('div',{class:'note'},d.multi?'👥 Для групи дату й час обираєш ти.':'🎂 Це день народження — дату й час обираєш тільки ти.'),
+    d.dateMode==='partner'?h('div',{class:'card stack'},h('div',{style:'display:flex;gap:8px;align-items:center'},h('b',{},'Вибір залишаєш гостю'),proTag()),h('div',{class:'small'},'Перед відповіддю «Так» людина сама вкаже дату й час, і ти отримаєш їх у сповіщенні.'))
+    :h('div',{class:'stack'},h('p',{class:'small'},'Введи вручну. Дата й час потрібні обоє — з ними з\'явиться зворотний відлік.'),
+      F(h('span',{},'Дата',req()),h('input',tag('date',{class:'field',type:'date',value:d.date,min:today(),oninput:e=>{d.date=e.target.value}}))),F(h('span',{},'Час',req()),h('input',tag('time',{class:'field',type:'time',value:d.time,oninput:e=>{d.time=e.target.value}})))))}
+
+/* ---- Де ---- */
+function s4(d){const bd=d.type==='bday'||d.multi,m=d.placeMode;
+  return h('div',{class:'stack'},H2('Де?'),
+    chipsRow([['manual','Написати вручну'],['map','Обрати на карті'],['partner','Хай обере гість',bd]],m,k=>{d.placeMode=k;wizard()}),
+    bd&&h('div',{class:'note'},d.multi?'👥 Для групи місце обираєш ти.':'🎂 Місце святкування обираєш тільки ти.'),
+    m==='partner'?h('div',{class:'card stack'},h('div',{style:'display:flex;gap:8px;align-items:center'},h('b',{},'Вибір залишаєш гостю'),proTag()),h('div',{class:'small'},'Людина напише місце або вкаже точку на карті — і ти отримаєш це в сповіщенні.'))
+    :h('div',{class:'stack'},
+      F(m==='manual'?h('span',{},'Назва місця',req()):'Назва місця (за бажанням)',inp(d,'place',tag('place',{placeholder:'Кав\'ярня «Лавр»',maxlength:80}))),
+      m==='manual'?F(h('span',{},'Адреса',req()),inp(d,'address',tag('address',{placeholder:'вул. Соборна, 12',maxlength:140})))
+      :h('div',{class:'stack'},h('button',tag('map',{class:'btn ghost',onclick:()=>mapPicker(d,r=>{d.lat=r.lat;d.lng=r.lng;d.address=r.address;if(!d.place)d.place=(r.address||'').split(',')[0];wizard()})}),d.lat?'🗺️ Змінити точку на карті':'🗺️ Обрати точку на карті *'),d.lat&&h('div',{class:'note'},'📍 '+(d.address||`${d.lat}, ${d.lng}`))),
+      h('p',{class:'small'},'Твоє справжнє місцезнаходження ніде не використовується й нікому не показується — лише місце, яке ти сам(а) обереш.')))}
+async function mapPicker(init,onPick){
+  const q=h('input',{class:'field',placeholder:'Знайти адресу чи місце…',style:'min-height:48px'}),mapEl=h('div',{class:'mapbox'}),info=h('div',{class:'small',style:'min-height:20px'}),ok=h('button',{class:'btn',disabled:true},'Обрати це місце');
+  const go=h('button',{class:'btn sm',style:'flex:0 0 auto'},'Знайти'),box=h('div',{class:'stack'},h('h2',{style:'font-size:22px'},'Де зустрічаємось?'),h('div',{class:'row',style:'align-items:center'},q,go),mapEl,info,ok);
+  const close=sheet(box);
+  try{await loadLeaflet()}catch(e){info.textContent='Карта не завантажилась — перевір інтернет і спробуй ще раз.';return}
+  const map=L.map(mapEl).setView(init.lat?[+init.lat,+init.lng]:[48.4,31.2],init.lat?16:6);
+  L.tileLayer(MAP_TILES,{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+  let pt=null,mk=null,label='';
+  const set=async(lat,lng,lbl)=>{pt=[lat,lng];if(mk)mk.setLatLng(pt);else mk=L.marker(pt,{icon:L.divIcon({html:'📍',className:'pin',iconSize:[34,34],iconAnchor:[17,32]})}).addTo(map);ok.disabled=false;
+    if(lbl){label=lbl;info.textContent=lbl;return}
+    info.textContent='Шукаю адресу…';label='';try{const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&accept-language=uk&lat=${lat}&lon=${lng}`),j=await r.json();label=j.display_name||'';info.textContent=label||'Точку обрано'}catch(e){info.textContent='Точку обрано'}};
+  if(init.lat)set(+init.lat,+init.lng,init.address||'');
+  map.on('click',e=>set(e.latlng.lat,e.latlng.lng));
+  const find=async()=>{const v=q.value.trim();if(!v)return;info.textContent='Шукаю…';try{const r=await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&accept-language=uk&q=${encodeURIComponent(v)}`),j=await r.json();if(!j.length){info.textContent='Нічого не знайшов — спробуй інакше або тицьни на карті';return}map.setView([+j[0].lat,+j[0].lon],16);set(+j[0].lat,+j[0].lon,j[0].display_name)}catch(e){info.textContent='Пошук зараз недоступний — тицьни точку на карті'}};
+  go.onclick=find;q.addEventListener('keydown',e=>{if(e.key==='Enter')find()});
+  ok.onclick=()=>{close();onPick({lat:pt[0].toFixed(6),lng:pt[1].toFixed(6),address:label})};
+  setTimeout(()=>map.invalidateSize(),320)}
+
+/* ---- Вигляд ---- */
+const BUN=[['#ffffff','Білий'],['#ffe9c7','Кремовий'],['#ffc9dc','Рожевий'],['#d9c8ff','Лавандовий'],['#d4d8e0','Сірий'],['#ffd0b0','Персиковий']];
+function s5(d){const max=canPro()?5:1;
+  const fi=h('input',{type:'file',accept:'image/jpeg,image/png,image/webp',multiple:true,style:'display:none',onchange:async e=>{for(const f of e.target.files){if(!/^image\/(jpeg|png|webp)$/.test(f.type)){toast('Підтримуються JPG, PNG, WEBP');continue}
+      if(d.photos.length>=max){toast(max===1?'У разовому запрошенні — одне фото. До 5 фото — у тарифі «Тиждень» чи «Місяць»':'Максимум 5 фото');break}
+      try{d.photos.push(await compress(f))}catch(_){toast('Не вдалося прочитати фото')}}wizard()}});
+  const bgi=h('input',{type:'file',accept:'image/jpeg,image/png,image/webp',style:'display:none',onchange:async e=>{const f=e.target.files[0];if(!f)return;if(!/^image\/(jpeg|png|webp)$/.test(f.type))return toast('Підтримуються JPG, PNG, WEBP');try{d.bgImg=await compress(f,1280,.72);wizard()}catch(_){toast('Не вдалося прочитати фото')}}});
+  const th=h('div',{class:'chips'},Object.entries(THEMES).map(([k,t])=>{const v=themeVars(k,d);return h('button',{class:'tcard'+(d.theme===k?' on':''),style:`background:linear-gradient(150deg,${v.bg1},${v.bg2} 60%,${v.bg3});${['minimal','r3d','sakura'].includes(k)?'color:#2a1a2a':''}`,onclick:()=>{d.theme=k;d.themeTouched=true;wizard()}},isLocked(t)&&proTag(t.vip),h('span',{},t.n))}));
+  const sw=(label,sub,on,fn)=>h('div',{class:'sw'},h('div',{},h('b',{},label),h('div',{class:'small'},sub)),h('input',{type:'checkbox',checked:!!on,onchange:e=>fn(e.target.checked)}));
+  const dots=(key)=>h('div',{class:'chips'},BUN.map(([c,n])=>h('button',{class:'sw2'+(d[key]===c?' on':''),title:n,'aria-label':n,style:`background:${c}`,onclick:()=>{d[key]=c;wizard()}})));
+  return h('div',{class:'stack'},H2('Вигляд'),F('Дизайн (змінюється наживо)',th),
+    d.theme==='custom'&&h('div',{class:'row'},F('Колір A',h('input',{class:'field',type:'color',value:d.colorA||'#ff4d8d',oninput:e=>{d.colorA=e.target.value;applyTheme('custom',d)}})),F('Колір B',h('input',{class:'field',type:'color',value:d.colorB||'#7c3aed',oninput:e=>{d.colorB=e.target.value;applyTheme('custom',d)}}))),
+    h('div',{class:'card stack'},sw('Зайчики-ведучі 🐰','Грають сценку при відкритті та реагують на відповідь',d.bunnies,v=>{d.bunnies=v;wizard()}),d.bunnies&&h('div',{class:'stack'},h('div',{class:'small'},'Колір першого зайчика (безкоштовно)'),dots('bun1'),h('div',{class:'small'},'Колір другого зайчика'),dots('bun2'))),
+    F(h('span',{style:'display:flex;gap:8px;align-items:center'},'Власне фото на тлі',proTag()),h('div',{class:'card stack'},d.bgImg?h('div',{style:`height:120px;border-radius:16px;background:url("${d.bgImg}") center/cover`}):h('div',{class:'small'},'Своя картинка стане фоном усього запрошення — наприклад, ваше спільне фото чи улюблене місце.'),
+      h('div',{class:'row'},h('button',{class:'btn ghost sm',onclick:()=>bgi.click()},d.bgImg?'Замінити':'Додати фон'),d.bgImg&&h('button',{class:'btn ghost sm',onclick:()=>{d.bgImg='';wizard()}},'Прибрати')),bgi)),
+    F(`Фото в запрошенні (${d.photos.length}/${max})`,h('div',{class:'photos'},d.photos.map((p,i)=>h('div',{class:'ph',style:`background-image:url(${p})`},h('button',{onclick:()=>{d.photos.splice(i,1);wizard()}},'×'))),d.photos.length<max&&h('button',{class:'add',onclick:()=>fi.click()},'+'),fi)),
+    max===1&&h('div',{class:'note'},'У разовому запрошенні — одне фото. До 5 фото — у тарифі «Тиждень» чи «Місяць».'),
+    F('Анімації',chipsRow([['auto','Усі'],['min','Менше'],['off','Вимкнути']],d.anim,k=>{d.anim=k;wizard()})),
+    h('p',{class:'small'},'Фото стискаються просто в телефоні. Теми PRO та VIP відкриваються з тарифом «Тиждень» чи «Місяць»; у першому безкоштовному запрошенні вони доступні всі.'))}
+
+/* ---- Відповіді ---- */
+const NOMODES=[['plain','Звичайна'],['run','Тікає 😏'],['shrink','Зменшується 🫥'],['grow','Росте й лускає 💥'],['dead','Є, але не працює 🙃'],['hide','Прибрати']];
+function s6(d){const secretOk=['date','confess'].includes(d.type),withN=['run','shrink','grow'].includes(d.noMode);
+  const cnt=h('div',{class:'row',style:'align-items:center;justify-content:center;gap:14px'},h('button',{class:'btn ghost sm',style:'flex:0 0 56px',onclick:()=>{d.noCount=Math.max(1,(+d.noCount||5)-1);wizard()}},'−'),h('b',tag('nocount',{style:'font-size:28px;min-width:44px;text-align:center'}),String(d.noCount)),h('button',{class:'btn ghost sm',style:'flex:0 0 56px',onclick:()=>{d.noCount=Math.min(15,(+d.noCount||5)+1);wizard()}},'+'));
+  const explain={plain:'Кнопка «Ні» працює як завжди.',run:'Кнопка пустотливо втікає. Скільки разів — вирішуєш ти, потім її можна натиснути.',shrink:'З кожним дотиком «Ні» зменшується, а «Так» росте. Коли ліміт вичерпано — «Ні» зникає.',grow:'З кожним дотиком «Ні» росте, а на останньому лускає — і зайчик плаче сумними словами. Відповідь зараховується як «ні».',dead:'Кнопка «Ні» на місці, але не натискається — лише смішно труситься.',hide:'Кнопки «Ні» взагалі немає — лишаються «Так» та «Подумаю».'}[d.noMode];
+  return h('div',{class:'stack'},H2('Відповіді'),
+    F('Які кнопки показати',chipsRow([['full','Так · Подумаю · Ні'],['two','Так · Ні']],d.mode,k=>{d.mode=k;wizard()})),
+    F(h('span',{style:'display:flex;gap:8px;align-items:center'},'Що буде з кнопкою «Ні»',(d.noMode!=='plain')&&proTag()),chipsRow(NOMODES,d.noMode,k=>{d.noMode=k;wizard()})),
+    h('div',{class:'note'},explain),
+    withN&&h('div',{class:'card stack'},h('div',{class:'small',style:'text-align:center'},'Скільки разів можна натиснути, поки станеться фінал'),cnt),
+    ['dead','hide','shrink'].includes(d.noMode)&&h('div',{class:'note'},'Заради поваги до адресата ми лишаємо маленьке «Не зараз» — воно зараховується як «Подумаю».'),
+    secretOk&&h('div',{class:'card stack'},h('div',{class:'sw'},h('div',{},h('b',{},'Секретне повідомлення ',proTag(true)),h('div',{class:'small'},'Лист у конверті: відкривається, лише коли гість скаже «Так».')),h('input',{type:'checkbox',checked:!!d.secretOn,onchange:e=>{d.secretOn=e.target.checked;wizard()}})),
+      d.secretOn&&h('textarea',tag('secret',{class:'field',maxlength:500,placeholder:'Те, що хочеш сказати лише після «Так»…',oninput:e=>{d.secretText=e.target.value}}),d.secretText)),
+    !secretOk&&h('div',{class:'small'},'Секретне повідомлення доступне для «Побачення» та «Зізнання».'),
+    h('div',{class:'note'},'👀 Сам(а) ти відповідати на своє запрошення не зможеш — лише переглядати, як воно виглядає.'))}
+
+/* ---- Готово та ціна ---- */
+function quote(d){const f=proFeatures(d);
+  if(!S.freeUsed)return{items:[{n:'Перше запрошення — безкоштовно, з усіма PRO/VIP-функціями',a:0}],ok:true};
+  if(hasSub())return{items:[{n:`Тариф «${PLANS[S.sub.plan].n}» діє до ${fmtT(S.sub.until)}`,a:0}],ok:true};
+  if(f.length)return{items:[{n:'Тариф потрібен для: '+f.join(', '),a:PLANS.week.p,tag:'від'}],need:'sub',f};
+  if(S.singles>0)return{items:[{n:'Оплачене запрошення з балансу',a:0}],ok:true};
+  return{items:[{n:PLANS.single.n,a:PLANS.single.p}],need:'any',f}}
+const lnk=(t,tab)=>h('a',{href:'#',style:'color:var(--acc2)',onclick:e=>{e.preventDefault();legalSheet(tab)}},t);
+function s7(d){const t=TYPES[d.type],q=quote(d);
+  return h('div',{class:'stack'},H2('Усе готово 🎉'),
+    h('div',{class:'card stack'},h('div',{},h('span',{style:'font-size:34px'},t.e),' ',h('b',{},t.n,(d.multi?d.guests.map(g=>g.name.trim()).filter(Boolean).join(', '):d.name)?' · '+(d.multi?d.guests.map(g=>g.name.trim()).filter(Boolean).join(', '):d.name):'')),h('div',{},d.title||t.ph),d.multi&&h('div',{class:'small'},`Гостей: ${d.guests.length} · особистих листів: ${d.guests.filter(g=>g.noteOn).length}`),
+      h('div',{class:'small'},[d.dateMode==='partner'?'дату обере гість':[d.date&&fmtDate(d.date),d.time].filter(Boolean).join(' '),d.placeMode==='partner'?'місце обере гість':d.place].filter(Boolean).join(' · ')||'Без дати та місця'),
+      h('div',{class:'small'},`Тема: ${THEMES[d.theme].n} · фото: ${d.photos.length}${d.bgImg?' · свій фон':''}${d.secretOn?' · секрет 🔒':''}`)),
+    h('div',{class:'card stack'},h('b',{},'До сплати'),...q.items.map(i=>h('div',{style:'display:flex;justify-content:space-between;gap:10px'},h('span',{class:'small',style:'color:inherit'},i.n),h('b',{},i.a?((i.tag?i.tag+' ':'')+i.a+' грн'):'0 грн'))),
+      q.need==='sub'&&h('div',{class:'note'},'Прибери ці функції — і запрошення коштуватиме '+PLANS.single.p+' грн. Або обери тариф — тоді все залишиться.')),
+    h('div',{class:'card'},h('label',{class:'sw',style:'cursor:pointer'},h('div',{},h('b',{},'Погоджуюсь з умовами',req()),h('div',{class:'small'},'Я прочитав(ла) і приймаю ',lnk('Умови користування','terms'),', ',lnk('Політику конфіденційності','privacy'),' та ',lnk('Публічну оферту','offer'),'.')),h('input',tag('consent',{type:'checkbox',checked:!!d.consent,onchange:e=>{d.consent=e.target.checked}})))),
+    h('button',{class:'btn ghost',onclick:()=>{const iv={...draftToInv(d),preview:true,token:'PREVIEW0000'};openInvite(iv,{guest:iv.guests[0]})}},'👀 Переглянути, як побачить гість'+(d.multi?' (перший з гостей)':'')))}
+
+/* ============================================================
+   ПУБЛІКАЦІЯ ТА ОПЛАТА
+   ============================================================ */
+const payloadOf=d=>{const{aiStyle,aiIdea,themeTouched,titleTouched,consent,...r}=d;return r};
+function pushNotify(inv){save();if(SERVER)api('/api/invitations/'+inv.id+'/notify',{method:'PATCH',body:inv.notify}).catch(()=>toast('Не вдалося зберегти сповіщення'))}
+async function openOwn(i,ctx){if(SERVER){try{const g=i.multi&&i.guests&&i.guests[0],v=await api('/api/public/'+(g?g.token:i.token));return openInvite(v.invite,{...ctx,guest:v.guest})}catch(e){return toast('Не вдалося відкрити запрошення')}}
+  openInvite(i,{...ctx,guest:i.multi?i.guests[0]:null})}
+function draftToInv(d){const{aiStyle,aiIdea,themeTouched,titleTouched,consent,...r}=d;const guests=d.multi?d.guests.map(g=>({id:token(),token:token(),name:g.name.trim(),note:g.noteOn?g.note.trim():'',response:null,status:'ACTIVE',log:[]})):[];return{...r,guests,name:d.multi?guests.map(g=>g.name).join(', '):d.name,photos:[...d.photos],status:'ACTIVE',response:null,log:[],createdAt:Date.now(),notify:{on:true,tg:'',phone:''}}}
+async function publish(){reload();const d=S.draft;
+  for(let i=1;i<=6;i++){const e=validate(i,d);if(e){S.step=i;wizard();return toast(e[1])}}
+  const q=quote(d);if(q.need)return paywall();
+  if(SERVER){let r;try{r=await api('/api/invitations',{body:{invite:payloadOf(d),consent:!!d.consent}})}catch(e){if(e.status===402){await sync();return paywall(e.data)}return toast((e.data&&e.data.error)||'Не вдалося опублікувати. Перевір інтернет і спробуй ще раз')}
+    await sync();const inv=S.invites.find(x=>x.id===r.id);return inv?shareScreen(inv):mine()}
+  const vip=canPro();
+  if(!S.freeUsed)S.freeUsed=true;else if(!hasSub()&&S.singles>0)S.singles--;
+  // SERVER: усе нижче — POST /api/invitations; токен і термін зберігання генерує сервер
+  const inv=draftToInv(d);inv.id=token();inv.token=token();inv.ownerId=S.uid;inv.expiresAt=Date.now()+365*24*3600*1000;inv.isVip=vip;inv.consentAt=Date.now();
+  S.invites.unshift(inv);save();shareScreen(inv)}
+function planCard(k,close){const p=PLANS[k],per=p.days?`≈ ${(p.p/p.days).toFixed(0)} грн/день`:'';
+  const desc={single:'Базові теми, 1 фото, лише посилання',week:'Безліміт на 7 днів · PRO/VIP-теми · до 5 фото · QR-серце · SMS-сповіщення',month:'Те саме на 30 днів — найвигідніше'}[k];
+  return h('button',{class:'type',style:'min-height:0;text-align:left;align-items:flex-start;padding:14px 16px;gap:4px',onclick:()=>{close();paySheet(k,()=>publish())}},h('span',{style:'display:flex;justify-content:space-between;width:100%;font-size:19px'},h('span',{},p.n),h('b',{},p.p+' грн')),h('span',{style:'font-size:13px;font-weight:600;opacity:.8'},desc+(per?' · '+per:'')))}
+function paywall(srv){const d=S.draft;let q=quote(d);if(srv&&srv.need==='sub')q={...q,need:'sub',f:srv.f||q.f||[]};else if(srv&&srv.need==='any'&&!q.need)q={...q,need:'any'};let close;const node=h('div',{class:'stack'});
+  node.append(h('h2',{style:'font-size:22px'},q.need==='sub'?'Ці функції — у тарифі':'Далі — платно'),
+    q.need==='sub'?h('div',{class:'note'},'У запрошенні є: '+q.f.join(', ')+'. Вони доступні з тарифом «Тиждень» чи «Місяць».'):h('p',{class:'small',style:'margin:0'},'Безкоштовне запрошення вже використано. Обери, як продовжити:'),
+    ...(q.need==='sub'?['week','month']:['single','week','month']).map(k=>planCard(k,()=>close())),
+    q.need==='sub'&&h('button',{class:'btn ghost',onclick:()=>{close();S.step=4;wizard()}},'Прибрати PRO-функції та платити '+PLANS.single.p+' грн'),
+    h('button',{class:'pill',style:'align-self:center',onclick:()=>{close();supportSheet('pay')}},'Потрібна допомога?'));
+  close=sheet(node)}
+
+/* Оплата переказом на картку. Платник вказує ПІБ; у коментарі — персональний код. Без сервера підтвердження робить власник в адмінці. */
+const validFio=s=>/^[^\d\s]{2,}(\s+[^\d\s]{2,}){1,2}$/.test(s.trim());
+function paySheet(planKey,onPaid){const p=PLANS[planKey],amt=p.p,pc=S.pcode;let rec=null,timer=0,close;const node=h('div',{class:'stack'});
+  const stop=()=>clearInterval(timer);
+  const fio=h('input',{class:'field',placeholder:'Прізвище Ім\'я По батькові',value:S.fio||'',maxlength:80,autocomplete:'name'});
+  const A=()=>{stop();node.innerHTML='';
+    node.append(h('h2',{style:'font-size:22px'},'Оплата: '+p.n),
+      h('div',{class:'card pay stack',style:'text-align:center'},h('div',{class:'bigamt'},amt+' грн'),h('div',{class:'small'},planKey==='single'?'Одне запрошення':`Тариф на ${p.days} днів · вимкнеться автоматично`)),
+      h('div',{class:'paystep'},h('i',{},'1'),h('div',{class:'stack',style:'gap:8px;flex:1'},h('div',{},h('b',{},'Хто платить'),req()),fio,h('div',{class:'small'},'ПІБ — як у банку. Так ми знайдемо твій переказ.'))),
+      h('div',{class:'paystep'},h('i',{},'2'),h('div',{class:'stack',style:'gap:8px;flex:1'},h('div',{},'Переведи ',h('b',{},amt+' грн'),' на картку:'),h('div',{class:'cardnum',onclick:()=>copy(PAY.card,'Номер картки скопійовано ✓')},fmtCard(PAY.card)),h('div',{class:'row'},h('button',{class:'btn ghost sm',onclick:()=>copy(PAY.card,'Номер скопійовано ✓')},'Скопіювати номер'),h('button',{class:'btn ghost sm',onclick:()=>copy(String(amt),'Суму скопійовано ✓')},'Скопіювати суму')))),
+      h('div',{class:'paystep'},h('i',{},'3'),h('div',{class:'stack',style:'gap:8px;flex:1'},h('div',{},'У коментарі до переказу напиши свій ',h('b',{},'персональний код'),' (він завжди той самий) — або своє ПІБ:'),h('div',{class:'codebox',onclick:()=>copy(pc,'Код скопійовано ✓')},pc))),
+      h('div',{class:'paystep'},h('i',{},'4'),h('div',{style:'flex:1'},'Натисни кнопку нижче. Коли переказ підтвердиться, ми сповістимо тебе, а запрошення опублікується саме.')),
+      PAY.link&&h('a',{class:'btn ghost',style:'display:flex;align-items:center;justify-content:center;text-decoration:none',href:PAY.link,target:'_blank',rel:'noopener noreferrer'},'Оплатити онлайн'),
+      h('div',{class:'small'},'Натискаючи кнопку, ти приймаєш ',lnk('Публічну оферту','offer'),'.'),
+      h('button',{class:'btn',onclick:async()=>{if(!validFio(fio.value)){bad(fio);fio.focus();return toast('Впиши ПІБ повністю — хоча б прізвище та ім\'я')}
+        if(SERVER){try{rec=await api('/api/payments',{body:{plan:planKey,fio:fio.value.trim()}});S.fio=fio.value.trim();S.purchases.unshift(rec);save();B()}catch(e){toast((e.data&&e.data.error)||'Не вдалося створити платіж. Спробуй ще раз')}return}
+        reload();S.fio=fio.value.trim();rec={id:token().slice(0,5).toUpperCase(),t:Date.now(),name:p.n,plan:planKey,amt,fio:S.fio,pcode:pc,status:'pending',grants:planKey==='single'?{single:1}:{plan:planKey},tariff:planKey!=='single'};S.purchases.unshift(rec);save();B()}},'Я оплатив(ла) ✅'),
+      h('button',{class:'pill',style:'align-self:center',onclick:()=>{close();supportSheet('pay')}},'Потрібна допомога?'))};
+  const check=async()=>{if(SERVER)await sync();else reload();const r=S.purchases.find(x=>x.id===rec.id);if(!r)return;
+    if(r.status==='confirmed'){stop();close();toast('Оплату підтверджено 💖');onPaid&&onPaid()}else if(r.status==='rejected'){stop();Cx()}};
+  const B=()=>{node.innerHTML='';node.append(h('div',{style:'text-align:center;padding:10px 0'},h('div',{class:'loader',style:'margin:0 auto 14px'},h('i',{},'💗')),h('h2',{style:'font-size:22px'},'Перевіряємо твій переказ'),h('p',{class:'small'},`${amt} грн · ${S.fio} · ${pc}. Зазвичай це кілька хвилин. Можеш закрити вікно — платіж збережеться в кабінеті, а запрошення почекає.`)),
+    h('button',{class:'btn ghost',onclick:check},'Оновити статус'),h('button',{class:'btn ghost',onclick:()=>{stop();close()}},'Закрити, продовжу пізніше'));stop();timer=setInterval(check,3000)};
+  const Cx=()=>{node.innerHTML='';node.append(h('div',{style:'text-align:center;padding:10px 0'},h('div',{style:'font-size:54px'},'🤔'),h('h2',{style:'font-size:22px'},'Переказ не знайшли'),h('p',{class:'small'},'Перевір суму, ПІБ і код у коментарі та спробуй ще раз — або напиши нам.')),h('button',{class:'btn',onclick:()=>{rec=null;A()}},'Спробувати ще раз'),h('button',{class:'btn ghost',onclick:()=>{close();supportSheet('pay')}},'Написати в підтримку'))};
+  A();close=sheet(node,stop)}
+
+/* ---------- екран «Поділитися» ---------- */
+async function shareScreen(inv){applyTheme('app');show('share');const el=$('#share');el.innerHTML='';const qbox=h('div',{class:'stack'}),nt=inv.notify=inv.notify||{on:true,tg:'',phone:''};
+  const tg=h('input',{class:'field',inputmode:'numeric',placeholder:'Telegram chat ID (напиши /start нашому боту)',value:nt.tg||'',maxlength:20});
+  const ph=h('input',{class:'field',type:'tel',placeholder:'+380…',value:nt.phone||'',maxlength:16,disabled:!inv.isVip});
+  const notif=h('div',{class:'card stack'},h('div',{class:'sw'},h('div',{},h('b',{},'🔔 Повідомити, коли відповідять'),h('div',{class:'small'},'Ти отримаєш «ТАК», «НІ» або «Думає» одразу — де зручно.')),h('input',{type:'checkbox',checked:nt.on!==false,onchange:e=>{nt.on=e.target.checked;pushNotify(inv)}})),
+    F('Telegram',tg),F(h('span',{style:'display:flex;gap:8px;align-items:center'},'SMS на телефон',proTag(true)),ph),!inv.isVip&&h('div',{class:'small'},'SMS-сповіщення — у тарифах «Тиждень» і «Місяць».'),
+    ('Notification' in window&&Notification.permission==='default')&&h('button',{class:'btn ghost sm',onclick:()=>Notification.requestPermission().then(()=>shareScreen(inv))},'Увімкнути сповіщення в браузері'),
+    h('button',{class:'btn sm',onclick:()=>{nt.tg=tg.value.trim();nt.phone=inv.isVip?ph.value.trim():'';pushNotify(inv);toast('Сповіщення збережено 🔔')}},'Зберегти'));
+  el.append(h('div',{class:'wrap stack'},h('div',{style:'text-align:center;padding-top:24px'},h('div',{style:'font-size:64px'},'🎉'),h('h2',{style:'font-size:30px'},'Запрошення готове!'),h('p',{class:'sub'},'Лишилось відправити його. Не забудь увімкнути сповіщення нижче — і ти одразу дізнаєшся відповідь 🐰')),
+    ...(inv.multi?[h('b',{},`Посилання для кожного гостя (${inv.guests.length})`),...inv.guests.map(g=>h('div',{class:'card stack',style:'gap:8px'},h('div',{style:'display:flex;justify-content:space-between;gap:8px;align-items:center'},h('b',{},g.name),g.note&&h('span',{class:'small'},'💌 з особистим листом')),h('div',{class:'url'},h('span',{style:'flex:1'},urlOf(g.token)),h('button',{class:'btn sm',onclick:()=>copy(urlOf(g.token),'Посилання для '+g.name+' скопійовано ✓')},'Копіювати')),h('button',{class:'btn ghost sm',onclick:()=>shareLink(inv,g)},'Надіслати '+g.name)))]:[h('div',{class:'url'},h('span',{style:'flex:1'},urlOf(inv.token)),h('button',{class:'btn sm',onclick:()=>copy(urlOf(inv.token))},'Скопіювати')),h('button',{class:'btn',onclick:()=>shareLink(inv)},'Поділитися посиланням')]),notif,qbox,
+    h('button',{class:'btn ghost',onclick:()=>openOwn(inv,{fromShare:true})},'Подивитись, як це побачить гість'),h('button',{class:'btn ghost',onclick:mine},'Мої запрошення'),h('button',{class:'btn ghost',onclick:home},'На головну')));
+  if(inv.isVip){let qt=inv.multi?inv.guests[0].token:inv.token;const drawQ=async()=>{qbox.innerHTML='';if(inv.multi)qbox.append(h('div',{class:'small'},'QR для гостя:'),h('div',{class:'chips'},inv.guests.map(g=>h('button',{class:'chip'+(g.token===qt?' on':''),onclick:()=>{qt=g.token;drawQ()}},g.name))));
+      qbox.append(h('div',{class:'small',style:'text-align:center'},'Створюю QR…'));try{const q=await qrPanel(inv,qt);qbox.lastChild.remove();qbox.append(q)}catch(e){qbox.lastChild.remove();qbox.append(h('div',{class:'small'},'QR зараз не вдалося створити — перевір інтернет.'))}};drawQ()}
+  else qbox.append(h('div',{class:'card stack'},h('div',{style:'display:flex;gap:8px;align-items:center'},h('b',{},'QR-код у вигляді серця'),proTag(true)),h('div',{class:'small'},'Автоматичний QR-код — у тарифах «Тиждень» і «Місяць». Зараз у тебе лише посилання.')))}
+
+/* ---------- кабінет ---------- */
+const PST={pending:['PENDING','Перевіряємо'],confirmed:['ACCEPTED','Оплачено'],rejected:['DECLINED','Не знайдено']};
+function mine(){mineDraw();if(SERVER)api('/api/notifs/read',{body:{}}).catch(()=>{}).then(sync).then(()=>{if($('#mine').classList.contains('active'))mineDraw(true)})}
+function mineDraw(quiet){reload();applyTheme('app');if(!quiet)show('mine');(S.notifs||[]).forEach(n=>n.read=true);save();clearUrl();const el=$('#mine');el.innerHTML='';
+  const list=S.invites.filter(i=>i.status!=='DELETED').length?S.invites.filter(i=>i.status!=='DELETED').map(i=>{const st=effStatus(i),t=TYPES[i.type];return h('div',{class:'card stack'},
+    h('div',{style:'display:flex;justify-content:space-between;gap:8px;align-items:center'},h('b',{},t.e+' '+(i.name||t.n)),i.multi?h('span',{class:'small'},`${i.guests.filter(g=>g.response).length}/${i.guests.length} відповіли`):h('span',{class:'st '+st},ST[st])),
+    h('div',{class:'small'},`${t.n} · ${i.date?fmtDate(i.date):i.dateMode==='partner'?'дату обере гість':'без дати'} · створено ${fmtT(i.createdAt)}`),
+    i.multi?h('div',{class:'stack',style:'gap:6px'},...i.guests.map(g=>h('div',{style:'display:flex;justify-content:space-between;gap:8px;align-items:center'},h('span',{},g.name),h('span',{class:'st '+(g.status||'ACTIVE')},ST[g.status||'ACTIVE'])))):(i.log.length>0&&h('div',{class:'small'},'🔔 '+i.log[i.log.length-1])),
+    h('div',{class:'row'},h('button',{class:'btn ghost sm',onclick:()=>shareScreen(i)},'Посилання'),h('button',{class:'btn ghost sm',onclick:()=>openOwn(i,{fromMine:true})},'Переглянути'),h('button',{class:'btn ghost sm',onclick:()=>{if(confirm('Видалити запрошення? Посилання перестане працювати.')){if(SERVER)api('/api/invitations/'+i.id,{method:'DELETE'}).then(sync).then(mine).catch(()=>toast('Не вдалося видалити'));else{i.status='DELETED';save();mine()}}}},'Видалити')))}):[h('p',{class:'sub'},'Тут поки тихо. Саме час когось запросити 💌')];
+  const pend=S.purchases.filter(p=>p.status==='pending');
+  const subCard=h('div',{class:'card stack'},hasSub()?h('div',{class:'when'},h('div',{style:'font-size:34px'},'👑'),h('div',{},h('b',{},`Тариф «${PLANS[S.sub.plan].n}» активний`),h('div',{class:'small'},`Діє до ${fmtT(S.sub.until)} — потім вимкнеться сам`))):h('div',{},h('b',{},'Тариф: немає'),h('div',{class:'small'},S.freeUsed?'Безкоштовне запрошення використано.':'Тебе чекає безкоштовне запрошення з усіма функціями 🎁'),S.singles>0&&h('div',{class:'small'},`Оплачених разових запрошень: ${S.singles}`)),
+    h('div',{class:'small'},'Персональний код для оплати:'),h('div',{class:'codebox',onclick:()=>copy(S.pcode,'Код скопійовано ✓')},S.pcode),
+    h('div',{class:'row'},['single','week','month'].map(k=>h('button',{class:'btn ghost sm',onclick:()=>paySheet(k,()=>mine())},`${PLANS[k].n} · ${PLANS[k].p} грн`))));
+  el.append(h('div',{class:'wrap stack'},h('div',{class:'top'},h('button',{class:'pill',onclick:home},'← Назад'),h('b',{style:'margin-right:128px'},'Кабінет')),
+    pend.length>0&&h('div',{class:'note'},`⏳ Платежів на перевірці: ${pend.length}. Щойно підтвердимо — тариф увімкнеться сам.`),
+    h('button',{class:'btn',onclick:()=>startWizard()},'+ Нове запрошення'),
+    h('h2',{style:'font-size:20px'},'🔔 Сповіщення'),
+    ...((S.notifs||[]).length?S.notifs.slice(0,6).map(n=>h('div',{class:'card stack',style:'gap:4px'},h('div',{},n.text),h('div',{class:'small'},fmtT(n.t)))):[h('p',{class:'small'},'Щойно хтось відповість на запрошення — ти дізнаєшся тут одразу.')]),
+    h('h2',{style:'font-size:20px'},'Мої запрошення'),...list,
+    h('h2',{style:'font-size:20px;margin-top:10px'},'Тариф'),subCard,
+    h('h2',{style:'font-size:20px;margin-top:10px'},'Платежі'),...(S.purchases.length?S.purchases.map(p=>{const [cls,lbl]=PST[p.status||'confirmed'];return h('div',{class:'card stack',style:'gap:8px'},h('div',{style:'display:flex;justify-content:space-between;gap:8px;align-items:center'},h('span',{},p.name),h('b',{},p.amt+' грн')),h('div',{style:'display:flex;justify-content:space-between;align-items:center'},h('span',{class:'small'},fmtT(p.t)),h('span',{class:'st '+cls},lbl)),p.status==='pending'&&h('button',{class:'btn ghost sm',onclick:mine},'Перевірити статус'))}):[h('p',{class:'small'},'Платежів ще не було.')]),
+    h('div',{class:'row',style:'margin-top:14px'},h('button',{class:'btn ghost sm',onclick:()=>supportSheet()},'💬 Підтримка'),h('button',{class:'btn ghost sm',onclick:()=>settingsSheet()},'⚙️ Налаштування'))))}
+
+/* ============================================================
+   СТОРІНКА ЗАПРОШЕННЯ (те, що бачить гість)
+   ============================================================ */
+function icsDownload(inv,pick){const c=pick||{},dd=c.date||inv.date,tt=c.time||inv.time||'12:00';if(!dd)return;const s=parseDT(dd,tt),e=new Date(s.getTime()+2*3600e3),f=x=>x.getFullYear()+String(x.getMonth()+1).padStart(2,'0')+String(x.getDate()).padStart(2,'0')+'T'+String(x.getHours()).padStart(2,'0')+String(x.getMinutes()).padStart(2,'0')+'00';
+  const esc=v=>String(v||'').replace(/[\\;,]/g,m=>'\\'+m).replace(/\n/g,'\\n');
+  const txt=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Pidemo//UA','BEGIN:VEVENT','UID:'+inv.token+'@pidemo','DTSTAMP:'+f(new Date())+'Z','DTSTART:'+f(s),'DTEND:'+f(e),'SUMMARY:'+esc(TYPES[inv.type].n+' 💌'),'LOCATION:'+esc(c.place||inv.place||c.address||inv.address),'END:VEVENT','END:VCALENDAR'].join('\r\n');
+  const a=h('a',{href:URL.createObjectURL(new Blob([txt],{type:'text/calendar'})),download:'pidemo.ics'});document.body.append(a);a.click();a.remove()}
+function openMissing(){applyTheme('app');show('invite');const el=$('#invite');el.innerHTML='';el.append(h('div',{class:'center'},h('div',{style:'font-size:64px'},'🫥'),h('h2',{style:'font-size:24px'},'Цього запрошення вже немає'),h('p',{class:'sub'},'Посилання застаріло або введене з помилкою.'),h('button',{class:'btn',style:'max-width:300px',onclick:home},'Створити своє 💌')))}
+function openInvite(inv,ctx={}){applyTheme(inv.theme,inv,{anim:inv.anim});show('invite');const el=$('#invite');el.innerHTML='';
+  const G=ctx.guest||(inv.multi&&inv.guests&&inv.guests.length?inv.guests[0]:null),R=G||inv,who=G?{...inv,name:G.name}:inv;
+  const viewOnly=!ctx.recipient,t=TYPES[inv.type],useB=inv.bunnies!==false&&inv.anim!=='off'&&!S.reduced;let scene=null,timers=[],cdTimer=0;const T=(f,ms)=>{const x=setTimeout(f,ms);timers.push(x)};
+  const pick={date:'',time:'',place:'',address:'',lat:'',lng:''};
+  cleanup=()=>{timers.forEach(clearTimeout);clearInterval(cdTimer);scene&&scene.dispose();document.querySelectorAll('.back,.ily').forEach(b=>b.remove())};
+  if(!ctx.recipient){const back=h('button',{class:'pill back',onclick:()=>{cleanup();ctx.fromMine?mine():ctx.fromShare?shareScreen(inv):S.draft?wizard():home()}},'← Назад');document.body.append(back)}
+  const st=effStatus(inv);
+  const msg=(e,x)=>el.append(h('div',{class:'center'},h('div',{style:'font-size:64px'},e),h('h2',{style:'font-size:24px'},x)));
+  if(st==='EXPIRED')return msg('⏳','Термін дії цього запрошення завершився.');
+  if(st==='DELETED')return msg('🫥','Це запрошення недоступне.');
+  const root=h('div',{class:'inv'});el.append(root);
+  const loading=()=>{root.innerHTML='';root.append(h('div',{class:'center'},h('div',{class:'loader'},h('i',{},'💗'))));T(intro,900)};
+  function intro(){root.innerHTML='';const stage=h('div',{class:'stage'}),btn=h('button',{class:'btn',style:'max-width:300px'},'Відкрити 💌');
+    const ic=h('div',{class:'center'},h('div',{class:'seal'},inv.bunnies!==false?'🐰':t.e),h('h2',{style:'font-size:clamp(24px,7vw,32px)'},who.name?`${who.name}, для тебе є запрошення`:'Для тебе є запрошення'),h('p',{class:'sub'},'Торкнись — там щось тепле'),btn);
+    root.append(stage,ic);
+    const afterHeart=async()=>{
+      if(useB){
+        try{await loadScript(URL_THREE)}catch(e){}
+        if(window.THREE){stage.classList.add('full');
+          scene=bunnyScene(stage,{burst:(x,y,n)=>fx.burst(x,y,n||70),done:()=>{stage.classList.remove('full');stage.classList.add('mini');ic.remove();T(()=>reveal(),500)}},{kind:t.sc,rom:!!t.rom,c1:inv.bun1,c2:inv.bun2,phase:'intro'});
+          if(scene){ic.style.display='none';return void scene.start()}}
+        stage.classList.remove('full')}
+      ic.remove();fx.burst(innerWidth/2,innerHeight/2.2,60);if(inv.bunnies!==false){stage.append(h('div',{style:'display:grid;place-items:center;height:100%;font-size:72px'},'🐰'+(t.rom?'💗':'✨')+'🐰'));stage.classList.add('mini')}T(reveal,350)};
+    btn.onclick=()=>{btn.disabled=true;ic.style.transition='opacity .4s';ic.style.opacity=0;
+      if(['date','confess','rel'].includes(inv.type)&&!S.reduced&&inv.anim!=='off')ilyHeart(afterHeart);else afterHeart()}}
+  function reveal(){const c=h('div',{class:'content'});root.append(c);const blocks=[];const B=(n,cls='')=>{n.classList.add('blk');if(cls)n.classList.add(cls);c.append(n);blocks.push(n);return n};
+    if(ctx.recipient&&!ctx.test&&!R.opened){R.opened=true;if(ctx.serverTok)api(`/api/public/${ctx.serverTok}/open`,{body:{}}).catch(()=>{});else{save();notifyOwner(who,`👀 ${who.name||'Гість'} відкрив(ла) запрошення`,'open')}}
+    B(h('div',{style:'padding-top:12px'},h('div',{class:'greet'},who.name?who.name+',':'Привіт,'),h('div',{class:'small',style:'margin-top:4px'},'для тебе є запрошення '+t.e)));
+    B(h('div',{class:'card'},h('div',{class:'ttl'},inv.title||t.ph),inv.body&&h('div',{class:'txt'},inv.body)));
+    if(G&&G.note)B(h('div',{class:'card'},h('div',{style:'font-size:13px;opacity:.7;font-weight:800'},'ЛИСТ САМЕ ДЛЯ ТЕБЕ'),h('div',{class:'txt',style:'margin-top:6px'},G.note)));
+    if(inv.photos.length)B(h('div',{class:'gal'},inv.photos.map(p=>h('img',{src:p,alt:'',loading:'lazy'}))));
+    if(inv.dateMode==='partner')B(h('div',{class:'card'},h('div',{class:'when'},h('div',{style:'font-size:40px'},'🗓️'),h('div',{},h('b',{},'Коли — вирішуєш ти'),h('div',{class:'small'},'Автор залишив цей вибір за тобою. Обери нижче, перед відповіддю.')))));
+    else if(inv.date||inv.time){const when=h('div',{class:'card'},h('div',{class:'when'},h('div',{style:'font-size:40px'},'🗓️'),h('div',{},inv.date&&h('div',{class:'big',style:'font-size:22px;text-transform:capitalize'},fmtDate(inv.date)),inv.time&&h('div',{style:'font:700 26px var(--fd)'},'🕒 '+inv.time))));
+      if(inv.date&&inv.time){const cd=h('div',{class:'cd'});when.append(cd);const tick=()=>{const diff=parseDT(inv.date,inv.time)-new Date();if(diff<=0){cd.textContent=new Date().toDateString()===parseDT(inv.date).toDateString()?'Сьогодні ❤️':'Час настав ✨';return}
+        const s=Math.floor(diff/1000),d=Math.floor(s/86400),p=n=>String(n).padStart(2,'0');cd.textContent=`До зустрічі: ${d>0?d+' '+plural(d,['день','дні','днів'])+' ':''}${p(Math.floor(s%86400/3600))}:${p(Math.floor(s%3600/60))}:${p(s%60)}`};tick();cdTimer=setInterval(tick,1000)}
+      B(when)}
+    if(inv.placeMode==='partner')B(h('div',{class:'card'},h('div',{class:'when'},h('div',{style:'font-size:40px'},'📍'),h('div',{},h('b',{},'Де — теж вирішуєш ти'),h('div',{class:'small'},'Напиши місце або познач точку на карті — нижче.')))));
+    else if(inv.place||inv.address||inv.lat){const dest=inv.lat&&inv.lng?`${inv.lat},${inv.lng}`:encodeURIComponent([inv.place,inv.address].filter(Boolean).join(', '));
+      B(h('div',{class:'card'},h('div',{style:'font-size:13px;opacity:.7;font-weight:800'},'МІСЦЕ'),h('div',{class:'ttl',style:'margin:4px 0 0;font-size:22px'},inv.place||'Місце зустрічі'),inv.address&&h('div',{class:'small'},inv.address),
+        mapBlock(inv.lat,inv.lng),h('a',{class:'btn',style:'display:flex;align-items:center;justify-content:center;text-decoration:none',href:'https://www.google.com/maps/dir/?api=1&destination='+dest,target:'_blank',rel:'noopener noreferrer'},'Відкрити маршрут')))}
+    if(inv.secretOn&&R.response!=='YES')B(h('div',{class:'card',style:'text-align:center'},h('div',{style:'font-size:44px'},'💌'),h('b',{},'Тут є секретне повідомлення'),h('div',{class:'small'},'Воно відкриється, коли ти скажеш «Так».')));
+    const rb=B(h('div',{class:'replybox'}));renderReply(rb);
+    B(h('div',{style:'text-align:center;display:flex;gap:10px;justify-content:center;flex-wrap:wrap'},ctx.recipient&&h('button',{class:'pill',onclick:home},'💌 Хочу таке ж'),ctx.recipient&&h('button',{class:'pill',style:'opacity:.75',onclick:()=>reportSheet(inv)},'Поскаржитися'),ctx.recipient&&h('button',{class:'pill',style:'opacity:.75',onclick:()=>supportSheet()},'Підтримка')));
+    blocks.forEach((b,i)=>T(()=>{b.classList.add('on');if(i>0)b.scrollIntoView({behavior:S.reduced?'auto':'smooth',block:i===blocks.length-1?'end':'center'})},S.reduced?0:i*(i<4?750:950)+100))
+    if(S.reduced)blocks.forEach(b=>b.classList.add('on'))}
+  function mapSvg(){const ns='http://www.w3.org/2000/svg',s=document.createElementNS(ns,'svg');s.setAttribute('viewBox','0 0 400 180');
+    s.innerHTML=`<rect width="400" height="180" fill="rgba(127,127,127,.18)"/><g stroke="rgba(255,255,255,.25)" stroke-width="2" fill="none"><path d="M0 120 C100 90 160 150 400 70"/><path d="M80 0 C110 70 90 120 150 180"/><path d="M260 0 C250 60 300 110 280 180"/><path d="M0 40 L400 60"/></g><g fill="rgba(255,255,255,.1)"><rect x="170" y="20" width="60" height="40" rx="8"/><rect x="300" y="100" width="70" height="50" rx="8"/><rect x="20" y="130" width="50" height="35" rx="8"/></g><circle cx="200" cy="92" r="26" fill="var(--acc)" opacity=".25"><animate attributeName="r" values="14;34;14" dur="2.4s" repeatCount="indefinite"/></circle><path d="M200 112C186 92 180 84 180 75a20 20 0 1 1 40 0c0 9-6 17-20 37Z" fill="var(--acc)"/><circle cx="200" cy="75" r="7" fill="#fff"/>`;return s}
+  function mapBlock(lat,lng){const box=h('div',{class:'map'});
+    if(lat&&lng){box.style.height='190px';box.style.position='relative';box.style.zIndex='0';loadLeaflet().then(()=>{const m=L.map(box,{zoomControl:false,dragging:false,scrollWheelZoom:false,doubleClickZoom:false,boxZoom:false,keyboard:false,touchZoom:false}).setView([+lat,+lng],15);L.tileLayer(MAP_TILES,{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(m);L.marker([+lat,+lng],{icon:L.divIcon({html:'📍',className:'pin',iconSize:[34,34],iconAnchor:[17,32]})}).addTo(m);T(()=>m.invalidateSize(),250)}).catch(()=>{box.style.height='';box.append(mapSvg())});return box}
+    box.append(mapSvg());return box}
+  function renderReply(box){box.innerHTML='';const yes=t.yes||'Так ❤️',res=R.response;
+    const needDate=inv.dateMode==='partner',needPlace=inv.placeMode==='partner',mode=inv.noMode||'plain',N=clamp(+inv.noCount||5,1,15);
+    const line=()=>{const c=R.chosen||{};return[(c.date||inv.date)&&fmtDate(c.date||inv.date),c.time||inv.time,c.place||inv.place].filter(Boolean).join(' · ')};
+    if(res==='YES'||res==='NO'){box.append(h('div',{class:'card done stack'},res==='YES'?[h('div',{class:'big'},'Домовились ❤️'),h('div',{class:'small'},line()),inv.secretOn&&inv.secretText&&h('div',{class:'card',style:'text-align:left'},h('b',{},'💌 Секретне повідомлення'),h('div',{class:'txt',style:'margin-top:6px'},inv.secretText)),h('div',{},'Зайчики вже радіють. А автору прийшла найтепліша новина дня 🐰'),(inv.date||(R.chosen&&R.chosen.date))&&h('button',{class:'btn ghost sm',onclick:()=>icsDownload(inv,R.chosen)},'📅 Додати в календар')]:[h('div',{class:'big',style:'font-size:24px'},'Дякуємо за чесну відповідь'),h('div',{class:'small'},'Зайчик трохи посумує, але все розуміє 🐰')]));return}
+    const pend=res==='MAYBE',dis=viewOnly;let attempts=0;
+    const nudge=m=>{toast(m);box.classList.remove('shake');void box.offsetWidth;box.classList.add('shake')};
+    const finish=ans=>{
+      if(ans==='YES'){if(needDate&&!pick.date)return nudge('Обери дату — і тоді тисни «Так» 💫');if(needPlace&&!(pick.place||pick.lat))return nudge('Підкажи місце — і тоді тисни «Так» 💫')}
+      if(ctx.test)return playAnswer(inv,ans,()=>renderReply(box)); // тестовий перегляд: нічого не зберігається
+      if(ctx.serverTok)return api(`/api/public/${ctx.serverTok}/respond`,{body:{ans,pick:{...pick}}}).then(r=>{R.response=r.response;R.status=r.status;R.chosen=r.chosen;if(r.secretText)inv.secretText=r.secretText;playAnswer(inv,ans,()=>renderReply(box))}).catch(e=>toast(e.status===409?'Відповідь уже надіслано':(e.data&&e.data.error)||'Не вдалося надіслати — перевір інтернет і спробуй ще раз'));
+      // SERVER: POST /api/public/:token/respond — одна відповідь, повтор → 409; PENDING можна змінити
+      R.response=ans;R.status={YES:'ACCEPTED',MAYBE:'PENDING',NO:'DECLINED'}[ans];
+      if(ans==='YES'&&(needDate||needPlace))R.chosen={...pick};
+      let txt=answerText(who,ans,ans==='YES'?line():'');
+      if(inv.multi){const gs=inv.guests,done=gs.filter(g=>g.response).length,yy=gs.filter(g=>g.response==='YES').length;txt+=` (відповіли ${done} з ${gs.length}, «так» — ${yy})`}
+      R.log=R.log||[];R.log.push(txt.replace(/^\S+\s/,''));save();
+      notifyOwner(who,txt,'answer');   // INTEGRATION: сервер → Telegram Bot API sendMessage / SMS-шлюз
+      playAnswer(inv,ans,()=>renderReply(box))};
+    const parts=[];
+    if(needDate)parts.push(h('div',{class:'card stack'},h('b',{},'🗓️ Коли тобі зручно?'),h('div',{class:'row'},h('input',{class:'field',type:'date',disabled:dis,value:pick.date,min:today(),oninput:e=>{pick.date=e.target.value}}),h('input',{class:'field',type:'time',disabled:dis,value:pick.time,oninput:e=>{pick.time=e.target.value}}))));
+    if(needPlace)parts.push(h('div',{class:'card stack'},h('b',{},'📍 Де зустрінемось?'),h('input',{class:'field',placeholder:'Назва місця або адреса',disabled:dis,value:pick.place,oninput:e=>{pick.place=e.target.value}}),
+      h('button',{class:'btn ghost sm',disabled:dis,onclick:()=>mapPicker(pick,r=>{pick.lat=r.lat;pick.lng=r.lng;pick.address=r.address;if(!pick.place)pick.place=(r.address||'').split(',')[0];renderReply(box)})},pick.lat?'🗺️ Точку обрано — змінити':'🗺️ Обрати на карті'),pick.address&&h('div',{class:'small'},pick.address)));
+    const yesB=h('button',{class:'btn yes',disabled:dis,onclick:()=>finish('YES')},yes),later=h('button',{class:'later',disabled:dis,onclick:()=>finish('MAYBE')},'Не зараз');
+    const no=h('button',{class:'btn ghost no',disabled:dis,onclick:()=>{
+      if(mode==='run'&&attempts<N){attempts++;const w=box.clientWidth-130,x=(Math.random()*2-1)*w/2,y=(Math.random()*2-1)*70;no.style.transform=`translate(${x}px,${y}px) rotate(${(Math.random()*2-1)*8}deg)`;return}
+      if(mode==='dead'){no.classList.remove('wig');void no.offsetWidth;no.classList.add('wig');toast('Ця кнопка щось зламалась 🙃');return}
+      if(mode==='shrink'){attempts++;if(attempts<N){const p=attempts/N;no.style.transition='all .3s cubic-bezier(.3,1.6,.5,1)';no.style.transform=`scale(${Math.max(.3,1-p*.72)})`;yesB.style.transition='all .3s cubic-bezier(.3,1.6,.5,1)';yesB.style.minHeight=(56+p*70)+'px';yesB.style.fontSize=(17+p*12)+'px';if(navigator.vibrate)navigator.vibrate(12);return}
+        no.classList.add('pop');setTimeout(()=>no.remove(),480);toast('Кнопка «Ні» зникла 🫥');return}
+      if(mode==='grow'){attempts++;if(attempts<N){const p=attempts/N;no.style.transition='all .25s cubic-bezier(.3,1.6,.5,1)';no.style.minHeight=(56+p*110)+'px';no.style.fontSize=(17+p*18)+'px';no.style.transform=`scale(${1+p*.08})`;if(navigator.vibrate)navigator.vibrate(18);return}
+        no.classList.add('pop');const r=no.getBoundingClientRect();fx.burst(r.left+r.width/2,r.top+r.height/2,30);setTimeout(()=>finish('NO'),520);return}
+      finish('NO')}},'Ні');
+    box.append(...parts,h('div',{class:'card stack'},h('h2',{style:'font-size:22px;text-align:center'},pend?'Добре, подумай. Зайчик почекає.':'Підемо?'),
+      h('div',{class:'ans'},yesB,!pend&&inv.mode==='full'&&h('button',{class:'btn ghost',disabled:dis,onclick:()=>finish('MAYBE')},'Подумаю 💭'),mode!=='hide'&&no),
+      !pend&&['dead','hide','shrink'].includes(mode)&&later,
+      dis&&h('div',{class:'note',style:'text-align:center'},'👀 Це лише перегляд. Відповісти може тільки той, кому надіслано запрошення.')))}
+  function reportSheet(inv){let r='spam';const RR=[['spam','Спам'],['unwanted','Небажане повідомлення'],['abuse','Образливий контент'],['fraud','Шахрайство'],['other','Інше']];const n=h('div',{class:'stack'});let close;
+    const why=h('textarea',{class:'field',maxlength:600,placeholder:'Опиши конкретно, що не так: що саме написано чи показано, чому це шкодить. Скарги без пояснень ми не розглядаємо.',style:'min-height:110px'}),contact=h('input',{class:'field',placeholder:'Як з тобою зв\'язатись (за бажанням)',maxlength:80});
+    const chips=h('div',{class:'chips',style:'flex-wrap:wrap'});const dc=()=>{chips.innerHTML='';RR.forEach(([k,l])=>chips.append(h('button',{class:'chip'+(r===k?' on':''),onclick:()=>{r=k;dc()}},l)))};dc();
+    n.append(h('h2',{style:'font-size:22px'},'Поскаржитися'),chips,F(h('span',{},'Що саме сталося',req()),why),F('Контакт',contact),h('button',{class:'btn',onclick:()=>{if(why.value.trim().length<15){bad(why);return toast('Опиши скаргу конкретніше — хоча б кількома реченнями')}
+      const rep={token:inv.token,reason:r,details:why.value.trim(),contact:contact.value.trim(),at:Date.now()};S.reports.push(rep);save();try{fetch(SUPPORT_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},keepalive:true,body:JSON.stringify({kind:'report',...rep})}).catch(()=>{})}catch(e){}
+      close();toast('Дякуємо, ми це перевіримо')}},'Надіслати'));close=sheet(n)}
+  loading()}
+
+/* ============================================================
+   АДМІНКА ВЛАСНИКА (вхід: 5 дотиків по логотипу або #/admin)
+   ============================================================ */
+let adminOk=false;
+let ADM_KEY=sessionStorage.getItem('pd_adm')||'';
+function animTests(){let tk='date';const tests=h('div',{class:'stack'});
+  const d=()=>{tests.innerHTML='';tests.append(chipsRow(Object.entries(TYPES).map(([k,x])=>[k,x.e+' '+x.n]),tk,k=>{tk=k;d()}),h('div',{class:'admtest'},[['YES','Так 💖'],['MAYBE','Подумаю 💭'],['NO','Ні 😢']].map(([a,n])=>h('button',{class:'btn ghost sm',onclick:()=>playAnswer({type:tk,anim:'auto',bunnies:true},a,null)},n))),h('button',{class:'btn ghost sm',onclick:()=>ilyHeart()},'Показати серце «I love you»'))};d();return tests}
+async function adminS(){applyTheme('app');show('admin');const el=$('#admin');el.innerHTML='';const wrap=h('div',{class:'wrap stack'});el.append(wrap);
+  const head=h('div',{class:'top'},h('button',{class:'pill',onclick:home},'← Вийти'),h('b',{style:'margin-right:128px'},'Адмінка'));
+  const call=(p,o={})=>fetch(p,{method:o.method||'GET',headers:{'Content-Type':'application/json','x-admin-key':ADM_KEY},body:o.body?JSON.stringify(o.body):undefined}).then(async r=>{const j=await r.json().catch(()=>({}));if(!r.ok)throw Object.assign(new Error('x'),{status:r.status,data:j});return j});
+  let st=null;if(ADM_KEY){try{st=await call('/api/admin/state')}catch(e){ADM_KEY='';sessionStorage.removeItem('pd_adm')}}
+  if(!st){const k=h('input',{class:'field',type:'password',placeholder:'Ключ адміністратора (ADMIN_KEY)',style:'text-align:center'}),er=h('div',{class:'small',style:'min-height:20px;text-align:center'});
+    wrap.append(head,h('div',{class:'card stack'},h('h2',{style:'font-size:22px'},'Вхід для власника'),k,er,h('button',{class:'btn',onclick:async()=>{ADM_KEY=k.value.trim();try{await call('/api/admin/state');sessionStorage.setItem('pd_adm',ADM_KEY);adminS()}catch(e){ADM_KEY='';er.textContent=e.status===401?'Невірний ключ':'Сервер недоступний'}}},'Увійти')));return}
+  const decide=async(id,ok)=>{try{await call('/api/admin/payments/'+id,{body:{ok}});toast(ok?'Підтверджено ✓':'Відхилено');adminS()}catch(e){toast((e.data&&e.data.error)||'Не вдалося');adminS()}};
+  wrap.append(head,h('div',{class:'small'},`Користувачів: ${st.stats.users} · запрошень: ${st.stats.invites}`),
+    h('h2',{style:'font-size:20px'},`Платежі, що чекають (${st.pending.length})`),...(st.pending.length?st.pending.map(p=>h('div',{class:'card stack'},h('div',{style:'display:flex;justify-content:space-between'},h('b',{},p.name),h('b',{},p.amt+' грн')),h('div',{},'ПІБ: ',h('b',{},p.fio||'—')),h('div',{class:'small'},`Код у коментарі: ${p.pcode||'—'} · ${fmtT(p.t)}`),h('div',{class:'small'},'Знайди в банку переказ із цією сумою, ПІБ чи кодом, потім підтверджуй.'),h('div',{class:'row'},h('button',{class:'btn sm',onclick:()=>decide(p.id,true)},'Підтвердити'),h('button',{class:'btn ghost sm',onclick:()=>decide(p.id,false)},'Відхилити')))):[h('p',{class:'small'},'Нових платежів немає.')]),
+    st.history.length>0&&h('h2',{style:'font-size:20px;margin-top:8px'},'Остання історія'),...st.history.map(p=>h('div',{class:'card',style:'display:flex;justify-content:space-between;gap:8px'},h('span',{},`${p.name} · ${p.fio||''}`),h('span',{class:'st '+PST[p.status][0]},PST[p.status][1]))),
+    h('h2',{style:'font-size:20px;margin-top:8px'},`Звернення й скарги (${st.tickets.length})`),...(st.tickets.length?st.tickets.map(x=>h('div',{class:'card stack',style:'gap:4px'},h('div',{},h('b',{},x.kind==='report'?'🚩 '+x.reason:'💬 '+x.topic),' · ',x.contact||'—'),h('div',{class:'small'},x.msg||x.details||''),x.token&&h('div',{class:'small'},'Запрошення: '+x.token),h('div',{class:'small'},fmtT(x.t)))):[h('p',{class:'small'},'Звернень немає.')]),
+    h('h2',{style:'font-size:20px;margin-top:8px'},'Перевірка анімацій'),h('div',{class:'small'},'Сцени «Так / Подумаю / Ні» (автор на своє запрошення відповісти не може):'),animTests())}
+async function admin(){if(SERVER)return adminS();reload();applyTheme('app');show('admin');const el=$('#admin');el.innerHTML='';const wrap=h('div',{class:'wrap stack'});el.append(wrap);
+  const head=h('div',{class:'top'},h('button',{class:'pill',onclick:()=>{adminOk=false;home()}},'← Вийти'),h('b',{style:'margin-right:128px'},'Адмінка'));
+  if(!adminOk){const pin=h('input',{class:'field',type:'password',inputmode:'numeric',placeholder:S.adminHash?'PIN-код':'Придумай PIN (від 4 цифр)',style:'text-align:center'}),err=h('div',{class:'small',style:'min-height:20px;text-align:center'});
+    wrap.append(head,h('div',{class:'card stack'},h('h2',{style:'font-size:22px'},S.adminHash?'Вхід для власника':'Перший вхід — створи PIN'),pin,err,
+      h('button',{class:'btn',onclick:async()=>{const v=pin.value.trim();if(v.length<4)return err.textContent='Мінімум 4 символи';const x=await sha('pd-admin:'+v);if(!S.adminHash){S.adminHash=x;save();adminOk=true;admin()}else if(x===S.adminHash){adminOk=true;admin()}else err.textContent='Невірний PIN'}},'Увійти'),
+      h('div',{class:'small'},'PIN лишається тільки на цьому пристрої. У справжньому сервісі вхід власника перевіряє сервер.')));return}
+  const decide=(id,ok)=>{reload();const p=S.purchases.find(x=>x.id===id);if(!p||p.status!=='pending')return;p.status=ok?'confirmed':'rejected';
+    if(ok){const g=p.grants||{};if(g.single)S.singles=(S.singles||0)+g.single;if(g.plan){const days=PLANS[g.plan].days,from=Math.max(Date.now(),S.sub&&S.sub.until||0);S.sub={plan:g.plan,until:from+days*864e5}}}save();toast(ok?'Підтверджено ✓':'Відхилено');admin()};
+  const pend=S.purchases.filter(p=>p.status==='pending'),done=S.purchases.filter(p=>p.status&&p.status!=='pending').slice(0,6);
+  let tk='date';const tests=h('div',{class:'stack'});
+  const drawTests=()=>{tests.innerHTML='';tests.append(chipsRow(Object.entries(TYPES).map(([k,x])=>[k,x.e+' '+x.n]),tk,k=>{tk=k;drawTests()}),h('div',{class:'admtest'},[['YES','Так 💖'],['MAYBE','Подумаю 💭'],['NO','Ні 😢']].map(([a,n])=>h('button',{class:'btn ghost sm',onclick:()=>playAnswer({type:tk,anim:'auto',bunnies:true},a,null)},n))),h('button',{class:'btn ghost sm',onclick:()=>ilyHeart()},'Показати серце «I love you»'))};drawTests();
+  wrap.append(head,
+    h('h2',{style:'font-size:20px'},`Платежі, що чекають (${pend.length})`),...(pend.length?pend.map(p=>h('div',{class:'card stack'},h('div',{style:'display:flex;justify-content:space-between'},h('b',{},p.name),h('b',{},p.amt+' грн')),h('div',{},'ПІБ: ',h('b',{},p.fio||'—')),h('div',{class:'small'},`Код у коментарі: ${p.pcode||'—'} · ${fmtT(p.t)}`),h('div',{class:'small'},'Знайди в банку переказ із цією сумою, ПІБ чи кодом, потім підтверджуй.'),h('div',{class:'row'},h('button',{class:'btn sm',onclick:()=>decide(p.id,true)},'Підтвердити'),h('button',{class:'btn ghost sm',onclick:()=>decide(p.id,false)},'Відхилити')))):[h('p',{class:'small'},'Нових платежів немає.')]),
+    done.length>0&&h('h2',{style:'font-size:20px;margin-top:8px'},'Остання історія'),...done.map(p=>h('div',{class:'card',style:'display:flex;justify-content:space-between;gap:8px'},h('span',{},`${p.name} · ${p.fio||''}`),h('span',{class:'st '+PST[p.status][0]},PST[p.status][1]))),
+    h('h2',{style:'font-size:20px;margin-top:8px'},`Звернення (${S.tickets.length})`),...(S.tickets.length?S.tickets.slice(-6).reverse().map(x=>h('div',{class:'card stack',style:'gap:4px'},h('div',{},h('b',{},x.topic),' · ',x.contact),h('div',{class:'small'},x.msg),h('div',{class:'small'},fmtT(x.t)))):[h('p',{class:'small'},'Звернень немає.')]),
+    h('h2',{style:'font-size:20px;margin-top:8px'},`Скарги (${S.reports.length})`),...(S.reports.length?S.reports.slice(-5).reverse().map(r=>h('div',{class:'card stack',style:'gap:4px'},h('div',{},h('b',{},r.reason),' · ',r.token),h('div',{class:'small'},r.details||''),h('div',{class:'small'},fmtT(r.at)))):[h('p',{class:'small'},'Скарг немає.')]),
+    h('h2',{style:'font-size:20px;margin-top:8px'},'Перевірка анімацій'),S.invites[0]&&h('button',{class:'btn ghost sm',onclick:()=>openOwn(S.invites[0],{recipient:true,test:true})},'Відкрити останнє запрошення як гість (тест, нічого не зберігається)'),h('div',{class:'small'},'Автор свого запрошення відповідати не може, тому сцени «Так / Подумаю / Ні» дивимось тут:'),tests)}
+
+/* ============================================================
+   СТАРТ І МАРШРУТИ
+   ============================================================ */
+async function route(){const m=location.pathname.match(/^\/i\/([A-Za-z0-9]{12})\/?$/)||location.hash.match(/^#\/i\/([A-Za-z0-9]{12})$/);
+  if(m&&SERVER){try{const v=await api('/api/public/'+m[1]);return openInvite(v.invite,{recipient:!v.isOwner,guest:v.guest,serverTok:m[1]})}catch(e){return openMissing()}}
+  if(m){reload();let inv=null,guest=null;for(const i of S.invites){if(i.token===m[1]){inv=i;break}const g=(i.guests||[]).find(x=>x.token===m[1]);if(g){inv=i;guest=g;break}}
+    if(!inv)return openMissing();const own=!inv.ownerId||inv.ownerId===S.uid;return openInvite(inv,{recipient:!own,guest})}
+  if(location.hash==='#/admin')return admin();home()}
+addEventListener('hashchange',route);save();(async()=>{await detectServer();await sync();route()})();
+let lastN=Date.now();
+setInterval(async()=>{if(SERVER)await sync();else reload();const fresh=(S.notifs||[]).filter(n=>n.t>lastN&&!n.read);if(fresh.length){lastN=Math.max(...fresh.map(n=>n.t));const own=$('#invite').classList.contains('active');if(!own)toast('🔔 '+fresh[0].text);if($('#home').classList.contains('active'))home()}},5000);
+</script>
+</body>
+</html>
